@@ -53,7 +53,7 @@
             >Login</router-link
           >
         </div>
-        <button class="btn btn-secondary" id="darkModeButton" @click="darkOrLight">Dark Mode</button>
+        <button class="btn btn-secondary" id="darkModeButton" @click="toggleTheme">Dark Mode</button>
       </div>
     </div>
   </nav>
@@ -79,26 +79,55 @@ nav {
 }
 </style>
 <script>
+import { Collapse } from "bootstrap";
 import { useUserStore } from "./store/index";
 export default {
   setup() {
     const user = useUserStore();
-    return { user };
+    return { user, theme:"" };
   },
   mounted() {
     this.user.loggedIn();
+    if (localStorage.getItem("theme") == "light") {
+      this.theme = "light",
+      localStorage.setItem("theme", "light");
+      this.applyTheme();
+    } else if (localStorage.getItem("theme") == "dark"){
+      this.theme = "dark",
+      localStorage.setItem("theme", "dark");
+      this.applyTheme();
+    } else {
+      this.theme = "dark",
+      localStorage.setItem("theme", "dark");
+      this.applyTheme();
+    }
+    const navLinks = document.querySelectorAll('.nav-item')
+    const menuToggle = document.getElementById('navbarSupportedContent')
+    const bsCollapse = Collapse.getOrCreateInstance(menuToggle, {toggle: false})
+    navLinks.forEach((l) => {
+        l.addEventListener('click', () => { bsCollapse.toggle() })
+})
   },  
   methods: {
-    darkOrLight() {
-      let currentTheme = document.body.getAttribute("data-bs-theme");
-      if (currentTheme=="dark"){
-        document.body.setAttribute("data-bs-theme","light");
-        document.getElementById("darkModeButton").innerText="Dark Mode";     
+    toggleTheme() {
+      if (this.theme=="light"){
+        this.theme="dark";
+        localStorage.setItem("theme", "dark");
       } else {
+        this.theme="light";
+        localStorage.setItem("theme", "light");
+      }
+      this.applyTheme();
+    },
+    applyTheme(){
+      if(this.theme == "dark"){
         document.body.setAttribute("data-bs-theme","dark");
         document.getElementById("darkModeButton").innerText="Light Mode";
+      } else {
+        document.body.setAttribute("data-bs-theme","light");
+        document.getElementById("darkModeButton").innerText="Dark Mode";
       }
-    },
+    }
   }
 };
 </script>
