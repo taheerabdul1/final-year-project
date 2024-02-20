@@ -148,6 +148,19 @@ app.get("/api/donations/:id", async (req, res) => {
   }
 });
 
+app.get("/api/userDonations/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const donations = await Donation.find({ donor: userId })
+      .populate("donor", "name") 
+      .populate("mosque", "name"); 
+    res.json(donations);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 app.get("/api/mosqueAllDonations/:mosqueId", async (req, res) => {
   const mosqueId = req.params.mosqueId;
   try {

@@ -15,6 +15,22 @@
     Update
   </button>
 
+  <div class="donation-table">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Amount</th>
+          <th>Mosque</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="donation in donations" :key="donation._id">
+          <td>{{ donation.amount }}</td>
+          <td>{{ donation.mosque.name }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
   <div
     class="modal fade"
     id="exampleModal"
@@ -25,7 +41,9 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Update user info here</h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">
+            Update user info here
+          </h1>
           <button
             type="button"
             class="btn-close"
@@ -36,7 +54,9 @@
         <div class="modal-body">
           <form @submit.prevent="update(user._id)" class="register-form">
             <div class="mb-3">
-              <label for="username" class="form-label">Username (cannot be changed)</label>
+              <label for="username" class="form-label"
+                >Username (cannot be changed)</label
+              >
               <input
                 class="form-control"
                 v-model="user.username"
@@ -47,7 +67,12 @@
             </div>
             <div class="mb-3">
               <label for="name" class="form-label">Full Name</label>
-              <input class="form-control" v-model="user.name" type="text" required />
+              <input
+                class="form-control"
+                v-model="user.name"
+                type="text"
+                required
+              />
             </div>
             <div class="mb-3">
               <label for="email" class="form-label">Email address</label>
@@ -58,13 +83,28 @@
                 required
               />
             </div>
-            <button class="btn btn-primary" type="submit" data-bs-dismiss="modal">Update</button>
+            <button
+              class="btn btn-primary"
+              type="submit"
+              data-bs-dismiss="modal"
+            >
+              Update
+            </button>
           </form>
         </div>
       </div>
     </div>
   </div>
 </template>
+<style>
+
+.donation-table{
+  margin-right:25%;
+  margin-left:25%;
+  width:50%;
+}
+
+</style>
 
 <script>
 import { useUserStore } from "../store/index";
@@ -77,27 +117,49 @@ export default {
       user,
     };
   },
+  data() {
+    return {
+      donations: [],
+    };
+  },
+  created() {
+    fetch(`http://localhost:3000/api/userDonations/${this.user._id}`)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        this.donations = data;
+      });
+  },
   methods: {
-    async update(id){
-      fetch(`http://localhost:3000/api/users/${id}`,{
-        method:"PUT",
+    async update(id) {
+      fetch(`http://localhost:3000/api/users/${id}`, {
+        method: "PUT",
         credentials: "include",
-        headers:{
+        headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(this.user)
+        body: JSON.stringify(this.user),
       })
-      .then((response)=>{
-        if(!response.ok){throw response}
-        return response.json()
-      }).then((data)=>{
-        if(data.success){
-          alert('User updated successfully!');
-        } else {
-          throw new Error(data.message || 'Failed to update user');
-        }
-      }).catch((err)=>{alert(`uh oh, theres a problem\n${err.status}: ${err.statusText}`)});
-    }
-  }
+        .then((response) => {
+          if (!response.ok) {
+            throw response;
+          }
+          return response.json();
+        })
+        .then((data) => {
+          if (data.success) {
+            alert("User updated successfully!");
+          } else {
+            throw new Error(data.message || "Failed to update user");
+          }
+        })
+        .catch((err) => {
+          alert(`uh oh, theres a problem\n${err.status}: ${err.statusText}`);
+        });
+    },
+  },
 };
 </script>
