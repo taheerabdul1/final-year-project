@@ -47,7 +47,7 @@ const routes = [
     component: MosquesPage,
     beforeEnter: (to, from, next) => {
       const user = useUserStore();
-      if (user.isAdmin) {
+      if (user.isLoggedIn) {
         next();
       } else {
         next({ name: 'home' });
@@ -71,11 +71,27 @@ const routes = [
     path: "/register",
     name: "register",
     component: RegisterPage,
+    beforeEnter: (to, from, next) => {
+      const user = useUserStore();
+      if (!user.isLoggedIn) {
+        next();
+      } else {
+        next({ name: 'home' });
+      }
+    }
   },
   {
     path: "/login",
     name: "login",
     component: LoginPage,
+    beforeEnter: (to, from, next) => {
+      const user = useUserStore();
+      if (!user.isLoggedIn) {
+        next();
+      } else {
+        next({ name: 'home' });
+      }
+    }
   },
   {
     path: '/:catchAll(.*)',

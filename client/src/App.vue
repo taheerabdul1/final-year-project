@@ -39,7 +39,7 @@
             >View Mosques</router-link
           >
           <router-link
-            v-if="user.isLoggedIn"
+            v-if="user.isLoggedIn&&user.isAdmin"
             @click="closeNavbar"
             class="nav-item nav-link"
             to="/adminDashboard"

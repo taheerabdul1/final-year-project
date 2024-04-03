@@ -17,6 +17,7 @@
           name: "",
           email: "",
           password: "",
+          isAdmin: false,
           isLoggedIn: false,
         };
       }
@@ -35,6 +36,7 @@
             this.username = data.username;
             this.name = data.name;
             this.email = data.email;
+            this.isAdmin = data.isAdmin;
           } else {
             this.isLoggedIn = false;
           }
@@ -55,6 +57,7 @@
           this.email = "";
           this.password = "";
           this.isLoggedIn = false;
+          this.isAdmin = false;
         }
       },
       async login() {
@@ -81,6 +84,7 @@
               this.username = data.username;
               this.name = data.name;
               this.email = data.email;
+              this.isAdmin = data.isAdmin;
               this.loggedIn();
               router.push("/");
             }
