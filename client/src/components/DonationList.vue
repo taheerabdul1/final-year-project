@@ -28,7 +28,7 @@ export default {
     };
   },
   created() {
-    fetch(`http://localhost:3000/api/donations`) 
+    fetch(`/api/donations`) 
       .then((response) => {
         if (response.ok) {
           return response.json();

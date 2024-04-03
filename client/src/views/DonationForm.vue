@@ -47,7 +47,7 @@ export default {
     };
   },
   created() {
-    fetch("http://localhost:3000/api/users")
+    fetch("/api/users")
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -62,7 +62,7 @@ export default {
         console.error(error);
       });
 
-    fetch("http://localhost:3000/api/mosques")
+    fetch("/api/mosques")
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -91,7 +91,7 @@ export default {
         mosque: this.mosque,
       };
 
-      fetch("http://127.0.0.1:3000/api/donations", {
+      fetch("/api/donations", {
         method: "POST",
         headers: {
           Accept: "application/json",

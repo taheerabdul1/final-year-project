@@ -96,7 +96,7 @@ export default {
     };
   },
   mounted() {
-    fetch(`http://localhost:3000/api/mosques/`)
+    fetch(`/api/mosques/`)
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -114,7 +114,7 @@ export default {
   methods: {
     mosqueMoreInfo(id, name) {
       this.selectedMosque = name;
-      fetch(`http://localhost:3000/api/mosqueAllDonations/${id}`)
+      fetch(`/api/mosqueAllDonations/${id}`)
         .then((response) => {
           if (response.ok) {
             return response.json();

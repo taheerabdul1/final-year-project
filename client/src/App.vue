@@ -10,32 +10,37 @@
         aria-controls="navbarSupportedContent"
         aria-expanded="false"
         aria-label="Toggle navigation"
+        @click="toggleNavbar"
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <div class="collapse navbar-collapse" :class="{ 'show': isNavbarOpen }" id="navbarSupportedContent">
         <div class="navbar-nav mx-auto">
-          <router-link to="/" class="nav-item nav-link">Home</router-link>
+          <router-link @click="closeNavbar" to="/" class="nav-item nav-link">Home</router-link>
           <router-link
             v-if="user.isLoggedIn"
+            @click="closeNavbar"
             class="nav-item nav-link"
             to="/makeDonation"
             >Make a Donation</router-link
           >
           <router-link
             v-if="user.isLoggedIn"
+            @click="closeNavbar"
             class="nav-item nav-link"
             to="/profile"
             >View Profile</router-link
           >
           <router-link
             v-if="user.isLoggedIn"
+            @click="closeNavbar"
             class="nav-item nav-link"
             to="/mosquesInfo"
             >View Mosques</router-link
           >
           <router-link
             v-if="user.isLoggedIn"
+            @click="closeNavbar"
             class="nav-item nav-link"
             to="/adminDashboard"
             >Admin Dashboard</router-link
@@ -44,16 +49,24 @@
             class="nav-item nav-link"
             to="/register"
             v-if="!user.isLoggedIn"
+            @click="closeNavbar"
             >Register</router-link
           >
           <router-link
             class="nav-item nav-link"
             to="login"
             v-if="!user.isLoggedIn"
+            @click="closeNavbar"
             >Login</router-link
           >
         </div>
-        <button class="btn btn-secondary" id="darkModeButton" @click="toggleTheme">Dark Mode</button>
+        <button
+          class="btn btn-secondary"
+          id="darkModeButton"
+          @click="toggleTheme"
+        >
+        {{ theme === 'dark' ? 'Light Mode' : 'Dark Mode' }}
+        </button>
       </div>
     </div>
   </nav>
@@ -79,55 +92,39 @@ nav {
 }
 </style>
 <script>
-import { Collapse } from "bootstrap";
+import { onMounted, ref } from 'vue';
 import { useUserStore } from "./store/index";
 export default {
   setup() {
     const user = useUserStore();
-    return { user, theme:"" };
+    const isNavbarOpen = ref(false);
+    const theme = ref("");
+    const toggleNavbar = () => {
+      isNavbarOpen.value = !isNavbarOpen.value;
+    };
+
+    const closeNavbar = () => {
+      isNavbarOpen.value = false;
+    };
+
+    const toggleTheme = () => {
+      theme.value = theme.value === "dark" ? "light" : "dark";
+      localStorage.setItem("theme", theme.value);
+      applyTheme();
+    };
+
+    const applyTheme = () => {
+      const themeAttribute = theme.value === "dark" ? "dark" : "light";
+      document.body.setAttribute("data-bs-theme", themeAttribute);
+    };
+
+    onMounted(() => {
+      user.loggedIn();
+      theme.value = localStorage.getItem("theme") || "dark";
+      applyTheme();
+    });
+
+    return { user, isNavbarOpen, theme, toggleNavbar, closeNavbar, toggleTheme };
   },
-  mounted() {
-    this.user.loggedIn();
-    if (localStorage.getItem("theme") == "light") {
-      this.theme = "light",
-      localStorage.setItem("theme", "light");
-      this.applyTheme();
-    } else if (localStorage.getItem("theme") == "dark"){
-      this.theme = "dark",
-      localStorage.setItem("theme", "dark");
-      this.applyTheme();
-    } else {
-      this.theme = "dark",
-      localStorage.setItem("theme", "dark");
-      this.applyTheme();
-    }
-    const navLinks = document.querySelectorAll('.nav-item')
-    const menuToggle = document.getElementById('navbarSupportedContent')
-    const bsCollapse = Collapse.getOrCreateInstance(menuToggle, {toggle: false})
-    navLinks.forEach((l) => {
-        l.addEventListener('click', () => { bsCollapse.toggle() })
-})
-  },  
-  methods: {
-    toggleTheme() {
-      if (this.theme=="light"){
-        this.theme="dark";
-        localStorage.setItem("theme", "dark");
-      } else {
-        this.theme="light";
-        localStorage.setItem("theme", "light");
-      }
-      this.applyTheme();
-    },
-    applyTheme(){
-      if(this.theme == "dark"){
-        document.body.setAttribute("data-bs-theme","dark");
-        document.getElementById("darkModeButton").innerText="Light Mode";
-      } else {
-        document.body.setAttribute("data-bs-theme","light");
-        document.getElementById("darkModeButton").innerText="Dark Mode";
-      }
-    }
-  }
 };
 </script>

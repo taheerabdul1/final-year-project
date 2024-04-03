@@ -11,8 +11,6 @@ dotenv.config();
 const app = express();
 const port = 3000;
 
-//test
-
 app.use(cors({ credentials: true, origin: "http://localhost:8080" }));
 
 app.use(bodyParser.json());
@@ -216,7 +214,6 @@ app.put("/api/users/:id", async (req, res) => {
         success: true
       });
     });
-    //res.json({ success: true });
   } catch (error) {
     console.log(error);
     return res.status(400).json({ success: false });
@@ -292,4 +289,8 @@ app.get("/api/logout", (req, res) => {
       res.json({ success: true });
     }
   });
+});
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/views/index.html'));
 });

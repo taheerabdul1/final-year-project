@@ -24,7 +24,7 @@
     actions: {
       async loggedIn() {
         try {
-          const response = await fetch("http://localhost:3000/api/loggedIn", {
+          const response = await fetch("/api/loggedIn", {
             method: "GET",
             credentials: "include",
           });
@@ -43,7 +43,7 @@
         }
       },
       async logout() {
-        const response = await fetch("http://localhost:3000/api/logout", {
+        const response = await fetch("/api/logout", {
           method: "GET",
           credentials: "include",
         });
@@ -59,7 +59,7 @@
       },
       async login() {
         try {
-          const response = await fetch("http://localhost:3000/api/login", {
+          const response = await fetch("/api/login", {
             method: "POST",
             credentials: "include",
             headers: {

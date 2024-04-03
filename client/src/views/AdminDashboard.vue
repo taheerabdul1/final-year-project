@@ -84,7 +84,7 @@ export default {
     };
   },
   created() {
-    fetch("http://localhost:3000/api/users")
+    fetch("/api/users")
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -98,7 +98,7 @@ export default {
       .catch((error) => {
         console.error(error);
       });
-    fetch("http://localhost:3000/api/mosques")
+    fetch("/api/mosques")
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -112,7 +112,7 @@ export default {
       .catch((error) => {
         console.error(error);
       });
-    fetch("http://localhost:3000/api/donations")
+    fetch("/api/donations")
       .then((response) => {
         if (response.ok) {
           return response.json();

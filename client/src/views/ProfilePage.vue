@@ -123,7 +123,7 @@ export default {
     };
   },
   created() {
-    fetch(`http://localhost:3000/api/userDonations/${this.user._id}`)
+    fetch(`/api/userDonations/${this.user._id}`)
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -135,7 +135,7 @@ export default {
   },
   methods: {
     async update(id) {
-      fetch(`http://localhost:3000/api/users/${id}`, {
+      fetch(`/api/users/${id}`, {
         method: "PUT",
         credentials: "include",
         headers: {
