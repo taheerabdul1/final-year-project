@@ -6,6 +6,7 @@ import LoginPage from "../views/LoginPage.vue";
 import ProfilePage from "../views/ProfilePage.vue";
 import MosquesPage from "../views/MosquesPage.vue";
 import AdminDashboard from "../views/AdminDashboard.vue";
+import ErrorPage from "../views/ErrorPage.vue";
 import { useUserStore } from "../store/index";
 
 const routes = [
@@ -18,13 +19,11 @@ const routes = [
     path: "/makeDonation",
     name: "donationForm",
     component: DonationForm,
-    // Adding a beforeEnter guard to check authentication
     beforeEnter: (to, from, next) => {
       const user = useUserStore();
       if (user.isLoggedIn) {
         next();
       } else {
-        // Redirect to login page if not logged in
         next({ name: 'home' });
       }
     }
@@ -45,7 +44,15 @@ const routes = [
   {
     path: "/mosquesInfo",
     name: "mosquesInfo",
-    component: MosquesPage
+    component: MosquesPage,
+    beforeEnter: (to, from, next) => {
+      const user = useUserStore();
+      if (user.isAdmin) {
+        next();
+      } else {
+        next({ name: 'home' });
+      }
+    }
   },
   {
     path: "/adminDashboard",
@@ -70,6 +77,10 @@ const routes = [
     name: "login",
     component: LoginPage,
   },
+  {
+    path: '/:catchAll(.*)',
+    component: ErrorPage // Use your error component for all undefined routes
+  }
 ];
 
 const router = createRouter({
