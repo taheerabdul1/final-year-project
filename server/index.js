@@ -11,6 +11,14 @@ dotenv.config();
 const app = express();
 const port = 3000;
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use(express.static(__dirname +  "/views"));
+
 app.use(cors({ credentials: true, origin: "http://localhost:8080" }));
 
 app.use(bodyParser.json());
