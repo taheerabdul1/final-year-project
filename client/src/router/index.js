@@ -7,6 +7,7 @@ import ProfilePage from "../views/ProfilePage.vue";
 import MosquesPage from "../views/MosquesPage.vue";
 import AdminDashboard from "../views/AdminDashboard.vue";
 import ErrorPage from "../views/ErrorPage.vue";
+import AccessDenied from "../views/AccessDenied.vue"
 import { useUserStore } from "../store/index";
 
 const routes = [
@@ -24,7 +25,7 @@ const routes = [
       if (user.isLoggedIn) {
         next();
       } else {
-        next({ name: 'home' });
+        next({ name: 'denied' });
       }
     }
   },
@@ -37,7 +38,7 @@ const routes = [
       if (user.isLoggedIn) {
         next();
       } else {
-        next({ name: 'home' });
+        next({ name: 'denied' });
       }
     }
   },
@@ -50,7 +51,7 @@ const routes = [
       if (user.isLoggedIn) {
         next();
       } else {
-        next({ name: 'home' });
+        next({ name: 'denied' });
       }
     }
   },
@@ -63,7 +64,7 @@ const routes = [
       if (user.isAdmin) {
         next();
       } else {
-        next({ name: 'home' });
+        next({ name: 'denied' });
       }
     }
   },
@@ -92,6 +93,11 @@ const routes = [
         next({ name: 'home' });
       }
     }
+  },
+  {
+    path: '/denied',
+    name: "denied",
+    component: AccessDenied,
   },
   {
     path: '/:catchAll(.*)',

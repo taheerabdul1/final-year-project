@@ -1,23 +1,23 @@
-import dotenv from "dotenv"
-import express from "express"
-import mongoose from "mongoose"
-import bodyParser from "body-parser"
-import cors from "cors"
-import session from "express-session"
-import passport from "passport"
-import passportLocalMongoose from "passport-local-mongoose"
-import MongoStore from "connect-mongo"
+import dotenv from "dotenv";
+import express from "express";
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import cors from "cors";
+import session from "express-session";
+import passport from "passport";
+import passportLocalMongoose from "passport-local-mongoose";
+import MongoStore from "connect-mongo";
 dotenv.config();
 const app = express();
 const port = 3000;
 
-import path from 'path';
-import { fileURLToPath } from 'url';
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(express.static(__dirname +  "/views"));
+app.use(express.static(__dirname + "/views"));
 
 app.use(cors({ credentials: true, origin: "http://localhost:8080" }));
 
@@ -94,142 +94,182 @@ ROUTES
 /*/
 
 app.get("/api/mosques", async (req, res) => {
-  try {
-    const mosques = await Mosque.find();
-    res.json(mosques);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
+  if (req.user) {
+    try {
+      const mosques = await Mosque.find();
+      res.json(mosques);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.status(401).json({ error: "User not authenticated" });
   }
 });
 
 app.post("/api/mosques", async (req, res) => {
-  try {
-    const { name, address, contact } = req.body;
-    const newMosque = new Mosque({ name, address, contact });
-    await newMosque.save();
-    res.status(201).json(newMosque);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
+  if (req.user) {
+    try {
+      const { name, address, contact } = req.body;
+      const newMosque = new Mosque({ name, address, contact });
+      await newMosque.save();
+      res.status(201).json(newMosque);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.status(401).json({ error: "User not authenticated" });
   }
 });
 
 app.get("/api/donations", async (req, res) => {
-  try {
-    const donations = await Donation.find()
-      .populate("donor", "name")
-      .populate("mosque", "name");
-    res.json(donations);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
+  if (req.user) {
+    try {
+      const donations = await Donation.find()
+        .populate("donor", "name")
+        .populate("mosque", "name");
+      res.json(donations);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.status(401).json({ error: "User not authenticated" });
   }
 });
 
 app.post("/api/donations", async (req, res) => {
-  try {
-    const { amount, donor, mosque } = req.body;
-    const newDonation = new Donation({ amount, donor, mosque });
-    await newDonation.save();
-    res.json(newDonation);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
+  if (req.user) {
+    try {
+      const { amount, donor, mosque } = req.body;
+      const newDonation = new Donation({ amount, donor, mosque });
+      await newDonation.save();
+      res.json(newDonation);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.status(401).json({ error: "User not authenticated" });
   }
 });
 
 app.get("/api/donations/:id", async (req, res) => {
-  const id = req.params.id;
-  try {
-    const donation = await Donation.findById(id)
-      .populate("donor", "name")
-      .populate("mosque", "name");
-    if (!donation)
-      return res.status(404).json({ msg: "No donation found with that ID" });
-    res.json(donation);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ msg: "Server error" });
+  if (req.user) {
+    const id = req.params.id;
+    try {
+      const donation = await Donation.findById(id)
+        .populate("donor", "name")
+        .populate("mosque", "name");
+      if (!donation)
+        return res.status(404).json({ msg: "No donation found with that ID" });
+      res.json(donation);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ msg: "Server error" });
+    }
+  } else {
+    res.status(401).json({ error: "User not authenticated" });
   }
 });
 
 app.get("/api/userDonations/:userId", async (req, res) => {
-  const userId = req.params.userId;
-  try {
-    const donations = await Donation.find({ donor: userId })
-      .populate("donor", "name") 
-      .populate("mosque", "name"); 
-    res.json(donations);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
+  if (req.user) {
+    const userId = req.params.userId;
+    try {
+      const donations = await Donation.find({ donor: userId })
+        .populate("donor", "name")
+        .populate("mosque", "name");
+      res.json(donations);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.status(401).json({ error: "User not authenticated" });
   }
 });
 
 app.get("/api/mosqueAllDonations/:mosqueId", async (req, res) => {
-  const mosqueId = req.params.mosqueId;
-  try {
-    const donations = await Donation.find({ mosque: mosqueId })
-      .sort([["createdAt", -1]])
-      .populate("donor", "name")
-      .populate("mosque", "name");
-    res.json(donations);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ msg: "Server error" });
+  if (req.user) {
+    const mosqueId = req.params.mosqueId;
+    try {
+      const donations = await Donation.find({ mosque: mosqueId })
+        .sort([["createdAt", -1]])
+        .populate("donor", "name")
+        .populate("mosque", "name");
+      res.json(donations);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ msg: "Server error" });
+    }
+  } else {
+    res.status(401).json({ error: "User not authenticated" });
   }
 });
 
 app.get("/api/users", async (req, res) => {
-  try {
-    const users = await User.find();
-    res.json(users);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
+  if (req.user) {
+    try {
+      const users = await User.find();
+      res.json(users);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.status(401).json({ error: "User not authenticated" });
   }
 });
 
 app.post("/api/users", async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    const newUser = new User({ name, email, password });
-    await newUser.save();
-    res.json(newUser);
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
+  if (req.user) {
+    try {
+      const { name, email, password } = req.body;
+      const newUser = new User({ name, email, password });
+      await newUser.save();
+      res.json(newUser);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.status(401).json({ error: "User not authenticated" });
   }
 });
 
 app.put("/api/users/:id", async (req, res) => {
-  try {
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, {
-      username: req.body.username,
-      name: req.body.name,
-      email: req.body.email,
-    });
-    req.session.passport.user = updatedUser.username;
-    req.login(updatedUser, (loginErr) => {
-      if (loginErr) {
-        return res.status(500).json({ error: "Error updating session" });
-      }
-
-      return res.json({
-        message: "User information updated successfully",
-        user: updatedUser,
-        success: true
+  if (req.user) {
+    try {
+      const updatedUser = await User.findByIdAndUpdate(req.params.id, {
+        username: req.body.username,
+        name: req.body.name,
+        email: req.body.email,
       });
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(400).json({ success: false });
+      req.session.passport.user = updatedUser.username;
+      req.login(updatedUser, (loginErr) => {
+        if (loginErr) {
+          return res.status(500).json({ error: "Error updating session" });
+        }
+  
+        return res.json({
+          message: "User information updated successfully",
+          user: updatedUser,
+          success: true,
+        });
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({ success: false });
+    }
+  } else {
+    res.status(401).json({ error: "User not authenticated" });
   }
 });
 
 app.post("/api/register", async (req, res) => {
-  try{
+  try {
     User.register(
       new User({
         username: req.body.username,
@@ -248,19 +288,23 @@ app.post("/api/register", async (req, res) => {
       }
     );
   } catch (error) {
-    res.json({success:false})
+    res.json({ success: false });
   }
 });
 
-app.post("/api/login", passport.authenticate("local", {failureMessage: true}), (req, res) => {
-  res.json({
-    success: true,
-    _id: req.user._id,
-    username: req.user.username,
-    name: req.user.name,
-    email: req.user.email,
-  });
-});
+app.post(
+  "/api/login",
+  passport.authenticate("local", { failureMessage: true }),
+  (req, res) => {
+    res.json({
+      success: true,
+      _id: req.user._id,
+      username: req.user.username,
+      name: req.user.name,
+      email: req.user.email,
+    });
+  }
+);
 
 app.get("/api/profile", (req, res) => {
   if (req.isAuthenticated()) {
@@ -299,6 +343,6 @@ app.get("/api/logout", (req, res) => {
   });
 });
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname + '/views/index.html'));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/views/index.html"));
 });
