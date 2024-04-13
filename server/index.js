@@ -60,6 +60,7 @@ const userSchema = new mongoose.Schema({
   name: String,
   email: String,
   password: String,
+  isAdmin: { type: Boolean, default: false },
 });
 
 // Define a schema for donation data
@@ -70,6 +71,18 @@ const donationSchema = new mongoose.Schema({
 });
 
 //not sure what this does
+//read below
+/*
+
+This plugin simplifies the process of adding password-based authentication using Passport.js.
+
+This is what it does:
+
+Adds fields: It automatically adds a username, a hashed password, and a salt field to the schema to store the credentials securely.
+Provides methods: It includes methods like .authenticate(), .serializeUser(), and .deserializeUser() which are essential for handling user login sessions.
+Handles hashing: It takes care of hashing passwords and verifying hashed passwords.
+
+*/
 userSchema.plugin(passportLocalMongoose);
 
 //registers models
@@ -275,6 +288,7 @@ app.post("/api/register", async (req, res) => {
         username: req.body.username,
         name: req.body.name,
         email: req.body.email,
+        isAdmin: req.body.isAdmin,
       }),
       req.body.password,
       function (err, user) {
