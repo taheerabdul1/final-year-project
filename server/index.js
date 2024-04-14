@@ -62,6 +62,12 @@ const userSchema = new mongoose.Schema({
   password: String,
   isAdmin: { type: Boolean, default: false },
   chosenMosque: { type: mongoose.Schema.Types.ObjectId, ref: "Mosque" },
+  campaigns: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Campaign",
+    },
+  ],
 });
 
 // Define a schema for donation data
@@ -69,6 +75,49 @@ const donationSchema = new mongoose.Schema({
   amount: Number,
   donor: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   mosque: { type: mongoose.Schema.Types.ObjectId, ref: "Mosque" },
+  campaign: {type: mongoose.Schema.Types.ObjectId, ref: 'Campaign'},
+});
+
+const campaignSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  mosque: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Mosque",
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+  goal: {
+    type: Number,
+    required: true,
+  },
+  raisedAmount: {
+    type: Number,
+    default: 0,
+  },
+  startDate: {
+    type: Date,
+    required: true,
+  },
+  endDate: {
+    type: Date,
+    required: true,
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  donors: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 
 //not sure what this does
@@ -90,6 +139,7 @@ userSchema.plugin(passportLocalMongoose);
 const Mosque = new mongoose.model("Mosque", mosqueSchema);
 const User = new mongoose.model("User", userSchema);
 const Donation = new mongoose.model("Donation", donationSchema);
+const Campaign = new mongoose.model("Campaign", campaignSchema);
 
 //connect passport with user database
 passport.use(User.createStrategy());
@@ -118,15 +168,15 @@ app.get("/api/mosques", async (req, res) => {
 });
 
 app.post("/api/mosques", async (req, res) => {
-    try {
-      const { name, address, contact } = req.body;
-      const newMosque = new Mosque({ name, address, contact });
-      await newMosque.save();
-      res.status(201).json(newMosque);
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Internal Server Error");
-    }
+  try {
+    const { name, address, contact } = req.body;
+    const newMosque = new Mosque({ name, address, contact });
+    await newMosque.save();
+    res.status(201).json(newMosque);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 app.get("/api/mosques/:id", async (req, res) => {
@@ -161,9 +211,16 @@ app.get("/api/donations", async (req, res) => {
 app.post("/api/donations", async (req, res) => {
   if (req.user) {
     try {
-      const { amount, donor, mosque } = req.body;
-      const newDonation = new Donation({ amount, donor, mosque });
+      const { amount, donor, mosque, campaign} = req.body;
+      const newDonation = new Donation({ amount, donor, mosque, campaign });
       await newDonation.save();
+
+      // Update the campaign's raisedAmount
+      await Campaign.findByIdAndUpdate(campaign, {
+        $inc: { raisedAmount: amount }, // Increment raisedAmount by the donated amount
+        $addToSet: { donors: donor } // Add donor to the donors array if not already present
+      });
+
       res.json(newDonation);
     } catch (error) {
       console.error(error);
@@ -285,6 +342,37 @@ app.put("/api/users/:id", async (req, res) => {
     }
   } else {
     res.status(401).json({ error: "User not authenticated" });
+  }
+});
+
+app.get("/api/campaigns", async (req, res) => {
+  try {
+    let campaigns = await Campaign.find();
+    return res.json(campaigns);
+  } catch (err) {
+    return res.status(400).send("Error getting campaigns");
+  }
+});
+
+app.post("/api/campaigns", async (req, res) => {
+  const { name, mosque, description, goal, startDate, endDate, createdBy } =
+    req.body;
+  const newCampaign = new Campaign({
+    name,
+    mosque,
+    description,
+    goal,
+    raisedAmount: 0,
+    startDate,
+    endDate,
+    createdBy,
+    donors: [],
+  });
+  try {
+    const savedCampaign = await newCampaign.save();
+    res.status(201).json(savedCampaign);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 });
 
