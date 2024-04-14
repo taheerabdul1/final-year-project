@@ -18,6 +18,7 @@
           email: "",
           password: "",
           isAdmin: false,
+          chosenMosque: "",
           isLoggedIn: false,
         };
       }
@@ -37,6 +38,7 @@
             this.name = data.name;
             this.email = data.email;
             this.isAdmin = data.isAdmin;
+            this.chosenMosque = data.chosenMosque;
           } else {
             this.isLoggedIn = false;
           }
@@ -85,6 +87,7 @@
               this.name = data.name;
               this.email = data.email;
               this.isAdmin = data.isAdmin;
+              this.chosenMosque = data.chosenMosque;
               this.loggedIn();
               router.push("/");
             }

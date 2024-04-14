@@ -7,6 +7,7 @@
   <h3>Name: {{ user.name }}</h3>
   <h3>Username: {{ user.username }}</h3>
   <h3>Email: {{ user.email }}</h3>
+  <h3>Chosen Mosque: {{ chosenMosqueName }}</h3>
   <button
     class="btn btn-primary"
     data-bs-toggle="modal"
@@ -83,6 +84,27 @@
                 required
               />
             </div>
+            <div class="mb-3">
+              <label for="chosenMosque">Choose your preferred Mosque</label>
+              <select
+                id="chosenMosque"
+                name="chosenMosque"
+                v-model="user.chosenMosque"
+                class="form-control"
+                required
+              >
+                <option value="" disabled selected>
+                  Click here to select a mosque
+                </option>
+                <option
+                  v-for="mosque in mosques"
+                  :key="mosque._id"
+                  :value="mosque._id"
+                >
+                  {{ mosque.name }}
+                </option>
+              </select>
+            </div>
             <button
               class="btn btn-primary"
               type="submit"
@@ -97,13 +119,11 @@
   </div>
 </template>
 <style>
-
-.donation-table{
-  margin-right:25%;
-  margin-left:25%;
-  width:50%;
+.donation-table {
+  margin-right: 25%;
+  margin-left: 25%;
+  width: 50%;
 }
-
 </style>
 
 <script>
@@ -120,9 +140,24 @@ export default {
   data() {
     return {
       donations: [],
+      chosenMosqueName: "",
     };
   },
   created() {
+    fetch("/api/mosques")
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error(response.status);
+        }
+      })
+      .then((data) => {
+        this.mosques = data;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     fetch(`/api/userDonations/${this.user._id}`)
       .then((response) => {
         if (response.ok) {
@@ -131,6 +166,17 @@ export default {
       })
       .then((data) => {
         this.donations = data;
+      });
+    fetch(`/api/mosques/${this.user.chosenMosque}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw response;
+        } else {
+          return response.json();
+        }
+      })
+      .then((data) => {
+        this.chosenMosqueName = data.name;
       });
   },
   methods: {
@@ -152,6 +198,7 @@ export default {
         .then((data) => {
           if (data.success) {
             alert("User updated successfully!");
+            this.$router.push("/");
           } else {
             throw new Error(data.message || "Failed to update user");
           }

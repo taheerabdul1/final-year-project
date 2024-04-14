@@ -6,6 +6,7 @@ import LoginPage from "../views/LoginPage.vue";
 import ProfilePage from "../views/ProfilePage.vue";
 import MosquesPage from "../views/MosquesPage.vue";
 import AdminDashboard from "../views/AdminDashboard.vue";
+import CampaignsPage from "../views/CampaignsPage.vue";
 import ErrorPage from "../views/ErrorPage.vue";
 import AccessDenied from "../views/AccessDenied.vue"
 import { useUserStore } from "../store/index";
@@ -46,6 +47,19 @@ const routes = [
     path: "/mosquesInfo",
     name: "mosquesInfo",
     component: MosquesPage,
+    beforeEnter: (to, from, next) => {
+      const user = useUserStore();
+      if (user.isLoggedIn) {
+        next();
+      } else {
+        next({ name: 'denied' });
+      }
+    }
+  },
+  {
+    path: "/campaigns",
+    name: "campaigns",
+    component: CampaignsPage,
     beforeEnter: (to, from, next) => {
       const user = useUserStore();
       if (user.isLoggedIn) {
@@ -101,7 +115,7 @@ const routes = [
   },
   {
     path: '/:catchAll(.*)',
-    component: ErrorPage // Use your error component for all undefined routes
+    component: ErrorPage
   }
 ];
 
