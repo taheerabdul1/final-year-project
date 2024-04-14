@@ -354,6 +354,15 @@ app.get("/api/campaigns", async (req, res) => {
   }
 });
 
+app.get("/api/campaigns/:mosqueId", async (req, res) => {
+  try {
+    let campaigns = await Campaign.find({ mosque: req.params.mosqueId });
+    return res.json(campaigns);
+  } catch (err) {
+    return res.status(400).send("Error getting campaigns");
+  }
+});
+
 app.post("/api/campaigns", async (req, res) => {
   const { name, mosque, description, goal, startDate, endDate, createdBy } =
     req.body;

@@ -1,6 +1,7 @@
 <template>
-  <h1>Donate</h1>
-  <p>Fill in the form below to make a donation <br> We thank you for your generosity!</p>
+  <h1>Donate to {{ chosenMosqueName }}</h1>
+  <p>Fill in the form below to make a donation <br> We thank you for your generosity!
+  <br>To change the mosque you wish to donate to, edit your profle.</p>
   <form @submit.prevent="submitDonation">
     <div class="mb-3">
       <label for="amount">Amount</label>
@@ -13,21 +14,6 @@
         placeholder="Enter Amount in £ here"
       />
     </div>
-    <div class="mb-3">
-      <label for="mosque">Mosque</label>
-      <select
-        id="mosque"
-        name="mosque"
-        v-model="mosque"
-        class="form-control"
-        required
-      >
-        <option value="" disabled selected>Click here to select a mosque</option>
-        <option v-for="mosque in mosques" :key="mosque._id" :value="mosque._id">
-          {{ mosque.name }}
-        </option>
-      </select>
-    </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 </template>
@@ -37,13 +23,19 @@ import { useUserStore } from "../store/index";
 
 export default {
   name: "DonationForm",
+  setup() {
+    const user = useUserStore();
+    return {
+      user,
+    };
+  },
   data() {
     return {
       amount: "",
       donor: "",
       mosque: "",
       users: [],
-      mosques: [],
+      chosenMosqueName: "",
     };
   },
   created() {
@@ -62,7 +54,7 @@ export default {
         console.error(error);
       });
 
-    fetch("/api/mosques")
+    fetch(`/api/mosques/${this.user.chosenMosque}`)
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -71,24 +63,18 @@ export default {
         }
       })
       .then((data) => {
-        this.mosques = data;
+        this.chosenMosqueName = data.name;
       })
       .catch((error) => {
         console.error(error);
       });
-  },
-  setup() {
-    const user = useUserStore();
-    return {
-      user,
-    };
   },
   methods: {
     submitDonation() {
       const donation = {
         amount: this.amount,
         donor: this.user._id,
-        mosque: this.mosque,
+        mosque: this.user.chosenMosque,
       };
 
       fetch("/api/donations", {
