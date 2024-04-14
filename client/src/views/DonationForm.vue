@@ -14,6 +14,13 @@
         placeholder="Enter Amount in £ here"
       />
     </div>
+    <div class="mb-3">
+      <label for="campaign">Campaign (Optional)</label>
+      <select class="form-control" id="campaign" name="campaign" v-model="selectedCampaign">
+        <option value="" selected>None</option>
+        <option v-for="campaign of campaigns" :key="campaign._id" :value="campaign._id">{{ campaign.name }}</option>
+      </select>
+    </div>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 </template>
@@ -35,10 +42,22 @@ export default {
       donor: "",
       mosque: "",
       users: [],
+      campaigns: [],
+      selectedCampaign: 0,
       chosenMosqueName: "",
     };
   },
   created() {
+    fetch(`/api/campaigns/${this.user.chosenMosque}`)
+    .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error(response.status);
+        }
+      })
+      .then((data) => this.campaigns = data)
+      .catch(() => console.log("Error")); 
     fetch("/api/users")
       .then((response) => {
         if (response.ok) {
@@ -75,8 +94,9 @@ export default {
         amount: this.amount,
         donor: this.user._id,
         mosque: this.user.chosenMosque,
+        campaign: this.selectedCampaign,
       };
-
+      console.log(donation);
       fetch("/api/donations", {
         method: "POST",
         headers: {
