@@ -85,7 +85,7 @@ export const useUserStore = defineStore("user", {
             this.name = data.name;
             this.email = data.email;
             this.isAdmin = data.isAdmin;
-            this.chosenMosqueId = data.chosenMosque;
+            this.chosenMosqueId = data.chosenMosqueId;
             this.loggedIn();
             router.push("/");
           }
