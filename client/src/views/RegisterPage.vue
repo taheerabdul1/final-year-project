@@ -83,6 +83,16 @@ export default {
   },
   methods: {
     async register() {
+      let newuser = {
+        username: this.username,
+        name: this.name,
+        email: this.email,
+        password: this.password,
+        isAdmin: this.isAdmin,
+        adminPasscode: this.adminPasscode,
+        chosenMosque: this.chosenMosque,
+      };
+      console.log(newuser)
       try {
         const response = await fetch("/api/register", {
           method: "POST",
@@ -90,15 +100,7 @@ export default {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            username: this.username,
-            name: this.name,
-            email: this.email,
-            password: this.password,
-            isAdmin: this.isAdmin,
-            adminPasscode: this.adminPasscode,
-            chosenMosque: this.chosenMosque,
-          }),
+          body: JSON.stringify(newuser),
         });
         const data = await response.json();
         if (data.success) {
