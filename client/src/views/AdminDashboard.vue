@@ -100,20 +100,20 @@ export default {
       .catch((error) => {
         console.error(error);
       });
-    fetch("/api/donations")
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error(response.status);
-        }
-      })
-      .then((data) => {
-        this.donations = data;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+      fetch(`/api/mosqueAllDonations/${this.user.chosenMosqueId}`)
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error(response.status);
+          }
+        })
+        .then((data) => {
+          this.donations = data;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
   },
 };
 </script>
