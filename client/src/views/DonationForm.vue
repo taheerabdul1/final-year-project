@@ -15,8 +15,8 @@
       />
     </div>
     <div class="mb-3">
-      <label for="campaign">Campaign (Optional)</label>
-      <select class="form-control" id="campaign" name="campaign" v-model="selectedCampaign">
+      <label for="campaign">Campaign</label>
+      <select class="form-select" id="campaign" name="campaign" v-model="selectedCampaign">
         <option value="" selected>None</option>
         <option v-for="campaign of campaigns" :key="campaign._id" :value="campaign._id">{{ campaign.name }}</option>
       </select>
@@ -43,7 +43,7 @@ export default {
       mosque: "",
       users: [],
       campaigns: [],
-      selectedCampaign: 0,
+      selectedCampaign: null,
       chosenMosqueName: "",
     };
   },
@@ -90,12 +90,21 @@ export default {
   },
   methods: {
     submitDonation() {
-      const donation = {
+      let donation = [];
+      if (this.selectedCampaign===""){
+        donation = {
+        amount: this.amount,
+        donor: this.user._id,
+        mosque: this.user.chosenMosque,
+      }
+      } else { 
+        donation = {
         amount: this.amount,
         donor: this.user._id,
         mosque: this.user.chosenMosque,
         campaign: this.selectedCampaign,
-      };
+      }
+    }
       console.log(donation);
       fetch("/api/donations", {
         method: "POST",
