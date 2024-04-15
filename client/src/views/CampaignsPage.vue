@@ -24,38 +24,39 @@ export default {
     const user = useUserStore();
     return {
       user,
-    };
-  },
-  data() {
-    return {
       chosenMosqueName: "",
       campaignList: [],
     };
   },
-  created() {
-    fetch(`/api/mosques/${this.user.chosenMosqueId}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw response;
-        } else {
-          return response.json();
-        }
-      })
-      .then((data) => {
-        this.chosenMosqueName = data.name;
-      });
-    // Fetch all campaigns and filter them by the chosen mosque id.
-    fetch(`/api/campaigns/${this.user.chosenMosqueId}`)
-      .then(function (response) {
-        return response.json();
-      })
-      .then(
-        function (data) {
-          this.campaignList = data;
-        }.bind(this)
-      );
+  async created() {
+    await this.fetchData();
   },
   methods: {
+    async fetchData() {
+      if (!this.user || !this.user.chosenMosqueId) {
+        return;
+      }
+
+      try {
+        // Fetch the chosen mosque data
+        const mosqueResponse = await fetch(`/api/mosques/${this.user.chosenMosqueId}`);
+        if (!mosqueResponse.ok) {
+          throw new Error("Failed to fetch mosque data");
+        }
+        const mosqueData = await mosqueResponse.json();
+        this.chosenMosqueName = mosqueData.name;
+
+        // Fetch all campaigns and filter them by the chosen mosque id.
+        const campaignsResponse = await fetch(`/api/campaigns/${this.user.chosenMosqueId}`);
+        if (!campaignsResponse.ok) {
+          throw new Error("Failed to fetch campaigns");
+        }
+        const campaignsData = await campaignsResponse.json();
+        this.campaignList = campaignsData;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
     formatDate(date) {
       return new Date(date).toLocaleDateString();
     },
