@@ -18,11 +18,11 @@
       <input class="form-control" v-model="password" type="password" required />
     </div>
     <div class="mb-3">
-      <label for="chosenMosque">Choose your preferred Mosque</label>
+      <label for="chosenMosqueId">Choose your preferred Mosque</label>
       <select
-        id="chosenMosque"
-        name="chosenMosque"
-        v-model="chosenMosque"
+        id="chosenMosqueId"
+        name="chosenMosqueId"
+        v-model="chosenMosqueId"
         class="form-control"
         required
       >
@@ -64,7 +64,7 @@ export default {
       password: "",
       isAdmin: false,
       adminPasscode: "",
-      chosenMosque: "",
+      chosenMosqueId: "",
       mosques: [],
     };
   },
@@ -94,7 +94,7 @@ export default {
         password: this.password,
         isAdmin: this.isAdmin,
         adminPasscode: this.adminPasscode,
-        chosenMosque: this.chosenMosque,
+        chosenMosqueId: this.chosenMosqueId,
       };
       console.log(newuser)
       try {

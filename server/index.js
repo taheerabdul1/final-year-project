@@ -61,7 +61,7 @@ const userSchema = new mongoose.Schema({
   email: String,
   password: String,
   isAdmin: { type: Boolean, default: false },
-  chosenMosque: { type: mongoose.Schema.Types.ObjectId, ref: "Mosque" },
+  chosenMosqueId: { type: mongoose.Schema.Types.ObjectId, ref: "Mosque" },
   campaigns: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -322,7 +322,7 @@ app.put("/api/users/:id", async (req, res) => {
         username: req.body.username,
         name: req.body.name,
         email: req.body.email,
-        chosenMosque: req.body.chosenMosque,
+        chosenMosqueId: req.body.chosenMosqueId,
       });
       req.session.passport.user = updatedUser.username;
       req.login(updatedUser, (loginErr) => {
@@ -344,6 +344,20 @@ app.put("/api/users/:id", async (req, res) => {
     res.status(401).json({ error: "User not authenticated" });
   }
 });
+
+app.get("/api/users/:mosqueId", async (req, res) => {
+  if (req.user) {
+    try {
+      const users = await User.find({chosenMosqueId:req.params.mosqueId});
+      res.json(users);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send("Internal Server Error");
+    }
+  } else {
+    res.status(401).json({ error: "User not authenticated" });
+  }
+})
 
 app.get("/api/campaigns", async (req, res) => {
   try {
@@ -401,7 +415,7 @@ app.post("/api/register", async (req, res) => {
         name: req.body.name,
         email: req.body.email,
         isAdmin: req.body.isAdmin,
-        chosenMosque: req.body.chosenMosque,
+        chosenMosqueId: req.body.chosenMosqueId,
       }),
       req.body.password,
       function (err, user) {
@@ -430,7 +444,7 @@ app.post(
       name: req.user.name,
       email: req.user.email,
       isAdmin: req.user.isAdmin,
-      chosenMosque: req.user.chosenMosque,
+      chosenMosqueId: req.user.chosenMosqueId,
     });
   }
 );
@@ -443,7 +457,7 @@ app.get("/api/profile", (req, res) => {
       name: req.user.name,
       email: req.user.email,
       isAdmin: req.user.isAdmin,
-      chosenMosque: req.user.chosenMosque,
+      chosenMosqueId: req.user.chosenMosqueId,
     });
   } else {
     res.status(401).send("You need to log in to access this route");
@@ -459,7 +473,7 @@ app.get("/api/loggedIn", (req, res) => {
       name: req.user.name,
       email: req.user.email,
       isAdmin: req.user.isAdmin,
-      chosenMosque: req.user.chosenMosque,
+      chosenMosqueId: req.user.chosenMosqueId,
     });
   } else {
     res.json({ success: false });

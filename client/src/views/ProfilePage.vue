@@ -16,7 +16,7 @@
     Update
   </button>
 
-  <div class="donation-table">
+  <div class="donation-table" v-if="donations.length > 0">
     <table class="table">
       <thead>
         <tr>
@@ -85,11 +85,11 @@
               />
             </div>
             <div class="mb-3">
-              <label for="chosenMosque">Choose your preferred Mosque</label>
+              <label for="chosenMosqueId">Choose your preferred Mosque</label>
               <select
-                id="chosenMosque"
-                name="chosenMosque"
-                v-model="user.chosenMosque"
+                id="chosenMosqueId"
+                name="chosenMosqueId"
+                v-model="user.chosenMosqueId"
                 class="form-control"
                 required
               >
@@ -139,6 +139,7 @@ export default {
   },
   data() {
     return {
+      mosques: [],
       donations: [],
       chosenMosqueName: "",
     };
@@ -167,7 +168,7 @@ export default {
       .then((data) => {
         this.donations = data;
       });
-    fetch(`/api/mosques/${this.user.chosenMosque}`)
+    fetch(`/api/mosques/${this.user.chosenMosqueId}`)
       .then((response) => {
         if (!response.ok) {
           throw response;

@@ -48,7 +48,7 @@ export default {
     };
   },
   created() {
-    fetch(`/api/campaigns/${this.user.chosenMosque}`)
+    fetch(`/api/campaigns/${this.user.chosenMosqueId}`)
     .then((response) => {
         if (response.ok) {
           return response.json();
@@ -73,7 +73,7 @@ export default {
         console.error(error);
       });
 
-    fetch(`/api/mosques/${this.user.chosenMosque}`)
+    fetch(`/api/mosques/${this.user.chosenMosqueId}`)
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -95,13 +95,13 @@ export default {
         donation = {
         amount: this.amount,
         donor: this.user._id,
-        mosque: this.user.chosenMosque,
+        mosque: this.user.chosenMosqueId,
       }
       } else { 
         donation = {
         amount: this.amount,
         donor: this.user._id,
-        mosque: this.user.chosenMosque,
+        mosque: this.user.chosenMosqueId,
         campaign: this.selectedCampaign,
       }
     }

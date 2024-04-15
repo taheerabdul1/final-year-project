@@ -33,7 +33,7 @@ export default {
     };
   },
   created() {
-    fetch(`/api/mosques/${this.user.chosenMosque}`)
+    fetch(`/api/mosques/${this.user.chosenMosqueId}`)
       .then((response) => {
         if (!response.ok) {
           throw response;
@@ -45,7 +45,7 @@ export default {
         this.chosenMosqueName = data.name;
       });
     // Fetch all campaigns and filter them by the chosen mosque id.
-    fetch(`/api/campaigns/${this.user.chosenMosque}`)
+    fetch(`/api/campaigns/${this.user.chosenMosqueId}`)
       .then(function (response) {
         return response.json();
       })

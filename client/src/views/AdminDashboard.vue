@@ -1,6 +1,8 @@
 <template>
   <div class="users-table">
     <h1>Admin Dashboard</h1>
+    <p>You are administrator for the following mosque:  {{mosque.name}}.</p>
+    <p>The following users are registered to make donations to {{ mosque.name }}.</p>
     <h2>Users</h2>
     <div class="table-responsive">
       <table class="table">
@@ -18,27 +20,6 @@
             <td>{{ user.username }}</td>
             <td>{{ user.name }}</td>
             <td>{{ user.email }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <h2>Mosques</h2>
-    <div class="table-responsive">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Address</th>
-            <th>Contact</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="mosque in mosques" :key="mosque._id">
-            <td>{{ mosque._id }}</td>
-            <td>{{ mosque.name }}</td>
-            <td>{{ mosque.address }}</td>
-            <td>{{ mosque.contact }}</td>
           </tr>
         </tbody>
       </table>
@@ -74,17 +55,24 @@
 }
 </style>
 <script>
+import { useUserStore } from '../store/index';
 export default {
   name: "AdminDashboard",
+  setup() {
+    const user = useUserStore();
+    return {
+      user,
+    }
+  },
   data() {
     return {
       users: [],
-      mosques: [],
+      mosque:[],
       donations: [],
     };
   },
   created() {
-    fetch("/api/users")
+    fetch(`/api/users/${this.user.chosenMosqueId}`)
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -98,7 +86,7 @@ export default {
       .catch((error) => {
         console.error(error);
       });
-    fetch("/api/mosques")
+    fetch(`/api/mosques/${this.user.chosenMosqueId}`)
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -107,7 +95,7 @@ export default {
         }
       })
       .then((data) => {
-        this.mosques = data;
+        this.mosque = data;
       })
       .catch((error) => {
         console.error(error);
