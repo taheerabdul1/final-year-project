@@ -10,7 +10,7 @@
           Start Date: {{ formatDate(campaign.startDate) }} <br />
           End Date: {{ formatDate(campaign.endDate) }}
         </p>
-        <a href="#" class="btn btn-primary">Donate</a>
+        <a href="/makeDonation" class="btn btn-primary">Donate</a>
       </div>
     </div>
   </div>
