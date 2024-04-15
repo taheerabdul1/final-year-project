@@ -49,9 +49,15 @@ export const useUserStore = defineStore("user", {
       });
       const data = await response.json();
       if (data.success) {
-        Object.assign(this, initialState);
-        localStorage.removeItem("user");
-        localStorage.setItem("user", JSON.stringify(this.$state));
+        this._id = 0;
+        this.username = "";
+        this.name = "";
+        this.email = "";
+        this.password = "";
+        this.isLoggedIn = false;
+        this.isAdmin = false;
+        this.chosenMosque = null;
+        localStorage.clear();
       }
     },
     async login() {
