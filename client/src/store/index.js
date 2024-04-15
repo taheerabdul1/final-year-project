@@ -51,6 +51,7 @@ export const useUserStore = defineStore("user", {
       if (data.success) {
         Object.assign(this, initialState);
         localStorage.removeItem("user");
+        localStorage.setItem("user", JSON.stringify(this.$state));
       }
     },
     async login() {
