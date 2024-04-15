@@ -182,13 +182,21 @@ export default {
   },
   methods: {
     async update(id) {
+      let updatedUser = {
+        _id: this.user._id,
+        username: this.user.username,
+        name: this.user.name,
+        email: this.user.email,
+        isAdmin: this.user.isAdmin,
+        chosenMosqueId: this.user.chosenMosqueId,
+      }
       fetch(`/api/users/${id}`, {
         method: "PUT",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(this.user),
+        body: JSON.stringify({updatedUser}),
       })
         .then((response) => {
           if (!response.ok) {
