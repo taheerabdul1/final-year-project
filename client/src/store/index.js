@@ -1,21 +1,21 @@
 import { defineStore } from "pinia";
 import router from "../router/index";
 
-const initialState = {
+const initialUserState = {
   _id: 0,
   username: "",
   name: "",
   email: "",
   password: "",
   isAdmin: false,
-  chosenMosque: "",
+  chosenMosqueId: "",
   isLoggedIn: false,
 };
 
 export const useUserStore = defineStore("user", {
   state: () => {
-    const storedState = localStorage.getItem("user");
-    return storedState ? JSON.parse(storedState) : initialState;
+    const storedUserState = localStorage.getItem("user");
+    return storedUserState ? JSON.parse(storedUserState) : initialUserState;
   },
   actions: {
     async loggedIn() {
@@ -32,7 +32,7 @@ export const useUserStore = defineStore("user", {
           this.name = data.name;
           this.email = data.email;
           this.isAdmin = data.isAdmin;
-          this.chosenMosque = data.chosenMosque;
+          this.chosenMosqueId = data.chosenMosqueId;
           localStorage.setItem("user", JSON.stringify(this.$state));
         } else {
           this.isLoggedIn = false;
@@ -56,7 +56,7 @@ export const useUserStore = defineStore("user", {
         this.password = "";
         this.isLoggedIn = false;
         this.isAdmin = false;
-        this.chosenMosque = null;
+        this.chosenMosqueId = null;
         localStorage.clear();
       }
     },
@@ -85,7 +85,7 @@ export const useUserStore = defineStore("user", {
             this.name = data.name;
             this.email = data.email;
             this.isAdmin = data.isAdmin;
-            this.chosenMosque = data.chosenMosque;
+            this.chosenMosqueId = data.chosenMosque;
             this.loggedIn();
             router.push("/");
           }
@@ -96,14 +96,3 @@ export const useUserStore = defineStore("user", {
     },
   },
 });
-
-  // import { watch } from "vue";
-  // const userStore = useUserStore();
-
-  // watch(
-  //   userStore,
-  //   (state) => {
-  //     localStorage.setItem("user", JSON.stringify(state));
-  //   },
-  //   { deep: true }
-  // );
