@@ -52,6 +52,9 @@
 </template>
 
 <script>
+import router from "../router/index";
+import {useUserStore} from "../store/index";
+
 export default {
   data() {
     return {
@@ -83,6 +86,7 @@ export default {
   },
   methods: {
     async register() {
+      const user = useUserStore();
       let newuser = {
         username: this.username,
         name: this.name,
@@ -104,7 +108,8 @@ export default {
         });
         const data = await response.json();
         if (data.success) {
-          this.$router.push("/");
+          await user.loggedIn();
+          router.push("/");
           alert("Registration successful");
         } else {
           alert("uh oh, try again!");

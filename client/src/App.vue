@@ -125,8 +125,8 @@ export default {
       document.body.setAttribute("data-bs-theme", themeAttribute);
     };
 
-    onMounted(() => {
-      user.loggedIn();
+    onMounted(async() => {
+      await user.loggedIn();
       theme.value = localStorage.getItem("theme") || "dark";
       applyTheme();
     });
