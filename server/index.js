@@ -396,7 +396,7 @@ app.post("/api/campaigns", async (req, res) => {
   });
   try {
     const savedCampaign = await newCampaign.save();
-    res.status(201).json(savedCampaign);
+    res.status(201).json({success:true,savedCampaign});
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

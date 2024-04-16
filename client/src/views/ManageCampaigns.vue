@@ -2,7 +2,7 @@
   <h1>Manage Campaigns</h1>
   <h2>Create Campaign</h2>
   <p>
-    To create a campaign, <button class="btn btn-primary">Click here</button>
+    To create a campaign, <button class="btn btn-primary" @click="addCampaign()">Click here</button>
   </p>
   <h2>View Campaigns</h2>
   <p>Below are the campaigns for the mosque you are administrating</p>
@@ -55,7 +55,7 @@
               ></button>
             </div>
             <div class="modal-body">
-              <form @submit.prevent="update(campaign)" class="register-form">
+              <form @submit.prevent="update(campaign)" class="form">
                 <div class="mb-3">
                   <label for="name" class="form-label">Name</label>
                   <input
@@ -152,6 +152,9 @@ export default {
       .catch((err) => console.log(err));
   },
   methods: {
+    addCampaign(){
+      this.$router.push("/addCampaign");
+    },
     formatDate(date) {
       return new Date(date).toLocaleDateString();
     },
