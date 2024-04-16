@@ -49,6 +49,13 @@
             v-if="user.isLoggedIn&&user.isAdmin"
             @click="closeNavbar"
             class="nav-item nav-link"
+            to="/manageCampaigns"
+            >Manage Campaigns</router-link
+          >
+          <router-link
+            v-if="user.isLoggedIn&&user.isAdmin"
+            @click="closeNavbar"
+            class="nav-item nav-link"
             to="/adminDashboard"
             >Admin Dashboard</router-link
           >

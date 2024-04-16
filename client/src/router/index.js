@@ -9,6 +9,7 @@ import AdminDashboard from "../views/AdminDashboard.vue";
 import CampaignsPage from "../views/CampaignsPage.vue";
 import ErrorPage from "../views/ErrorPage.vue";
 import AccessDenied from "../views/AccessDenied.vue"
+import ManageCampaigns from "../views/ManageCampaigns.vue";
 import { useUserStore } from "../store/index";
 
 const routes = [
@@ -63,6 +64,19 @@ const routes = [
     beforeEnter: (to, from, next) => {
       const user = useUserStore();
       if (user.isLoggedIn) {
+        next();
+      } else {
+        next({ name: 'denied' });
+      }
+    }
+  },
+  {
+    path: "/manageCampaigns",
+    name: "manageCampaigns",
+    component: ManageCampaigns,
+    beforeEnter: (to, from, next) => {
+      const user = useUserStore();
+      if (user.isAdmin) {
         next();
       } else {
         next({ name: 'denied' });

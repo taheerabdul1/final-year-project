@@ -370,7 +370,10 @@ app.get("/api/campaigns", async (req, res) => {
 
 app.get("/api/campaigns/:mosqueId", async (req, res) => {
   try {
-    let campaigns = await Campaign.find({ mosque: req.params.mosqueId });
+    let campaigns = await Campaign.find({ mosque: req.params.mosqueId })
+    .populate("createdBy", "name")
+    .populate("donors", "name")
+    .populate("mosque", "name");
     return res.json(campaigns);
   } catch (err) {
     return res.status(400).send("Error getting campaigns");
@@ -398,6 +401,32 @@ app.post("/api/campaigns", async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 });
+
+app.put("/api/campaigns/:campaignId", async (req, res) => {
+  try{
+    let updatedCampaign = await Campaign.findByIdAndUpdate(req.params.campaignId, {
+      name: req.body.name,
+      description: req.body.description,
+      goal: req.body.goal,
+      startDate: req.body.startDate,
+      endDate: req.body.endDate
+    })
+    let campaigns = await Campaign.find({mosque: req.body.mosque._id})
+    .populate("createdBy", "name")
+    .populate("donors", "name")
+    .populate("mosque", "name");
+    return res.json({
+      message: "Campaign information updated successfully",
+      campaigns: campaigns,
+      success: true,
+    });
+  } catch (e){
+    console.log(e);
+    return res.status(500).json({
+        error: e
+    });
+  }
+})
 
 app.post("/api/register", async (req, res) => {
   const adminPasscode = process.env.PASSCODE; // Retrieve the passcode from environment variables
