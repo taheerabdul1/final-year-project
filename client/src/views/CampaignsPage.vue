@@ -1,4 +1,5 @@
 <template>
+  <h1>View Campaigns</h1>
   <div class="campaign-list">
     <div class="card" v-for="campaign in campaignList" :key="campaign._id">
       <div class="card-body">
