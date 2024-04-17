@@ -1,8 +1,8 @@
 <template>
   <div class="users-table">
     <h1>Admin Dashboard</h1>
-    <p>You are administrator for the following mosque:  {{mosque.name}}.</p>
-    <p>The following users are registered to make donations to {{ mosque.name }}.</p>
+    <p>You are administrator for the following mosque:  {{user.chosenMosqueName}}.</p>
+    <p>The following users are registered to make donations to {{ user.chosenMosqueName }}.</p>
     <h2>Users</h2>
     <div class="table-responsive">
       <table class="table">
@@ -46,6 +46,7 @@
       </table>
     </div>
   </div>
+  <ManageCampaigns/>
 </template>
 <style>
 .users-table {
@@ -56,8 +57,12 @@
 </style>
 <script>
 import { useUserStore } from '../store/index';
+import ManageCampaigns from '../components/ManageCampaigns.vue'
 export default {
   name: "AdminDashboard",
+  components: {
+    ManageCampaigns,
+  },
   setup() {
     const user = useUserStore();
     return {
@@ -82,20 +87,6 @@ export default {
       })
       .then((data) => {
         this.users = data;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    fetch(`/api/mosques/${this.user.chosenMosqueId}`)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error(response.status);
-        }
-      })
-      .then((data) => {
-        this.mosque = data;
       })
       .catch((error) => {
         console.error(error);

@@ -486,7 +486,8 @@ app.post("/api/register", async (req, res) => {
 app.post(
   "/api/login",
   passport.authenticate("local", { failureMessage: true }),
-  (req, res) => {
+  async (req, res) => {
+    const chosenMosqueName = await Mosque.findById(req.user.chosenMosqueId, "name");
     res.json({
       success: true,
       _id: req.user._id,
@@ -495,12 +496,14 @@ app.post(
       email: req.user.email,
       isAdmin: req.user.isAdmin,
       chosenMosqueId: req.user.chosenMosqueId,
+      chosenMosqueName: chosenMosqueName.name,
     });
   }
 );
 
-app.get("/api/profile", (req, res) => {
+app.get("/api/profile", async (req, res) => {
   if (req.isAuthenticated()) {
+    const chosenMosqueName = await Mosque.findById(req.user.chosenMosqueId, "name");
     res.json({
       _id: req.user._id,
       username: req.user.username,
@@ -508,14 +511,16 @@ app.get("/api/profile", (req, res) => {
       email: req.user.email,
       isAdmin: req.user.isAdmin,
       chosenMosqueId: req.user.chosenMosqueId,
+      chosenMosqueName: chosenMosqueName.name,
     });
   } else {
     res.status(401).send("You need to log in to access this route");
   }
 });
 
-app.get("/api/loggedIn", (req, res) => {
+app.get("/api/loggedIn", async (req, res) => {
   if (req.isAuthenticated()) {
+    const chosenMosqueName = await Mosque.findById(req.user.chosenMosqueId, "name");
     res.json({
       success: req.isAuthenticated(),
       _id: req.user._id,
@@ -524,6 +529,7 @@ app.get("/api/loggedIn", (req, res) => {
       email: req.user.email,
       isAdmin: req.user.isAdmin,
       chosenMosqueId: req.user.chosenMosqueId,
+      chosenMosqueName: chosenMosqueName.name,
     });
   } else {
     res.json({ success: false });

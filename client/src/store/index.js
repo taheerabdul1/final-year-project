@@ -9,6 +9,7 @@ const initialUserState = {
   password: "",
   isAdmin: false,
   chosenMosqueId: "",
+  chosenMosqueName: "",
   isLoggedIn: false,
 };
 
@@ -33,6 +34,7 @@ export const useUserStore = defineStore("user", {
           this.email = data.email;
           this.isAdmin = data.isAdmin;
           this.chosenMosqueId = data.chosenMosqueId;
+          this.chosenMosqueName = data.chosenMosqueName,
           localStorage.setItem("user", JSON.stringify(this.$state));
         } else {
           this.isLoggedIn = false;
@@ -57,6 +59,7 @@ export const useUserStore = defineStore("user", {
         this.isLoggedIn = false;
         this.isAdmin = false;
         this.chosenMosqueId = null;
+        this.chosenMosqueName = '';
         localStorage.clear();
       }
     },
@@ -86,6 +89,7 @@ export const useUserStore = defineStore("user", {
             this.email = data.email;
             this.isAdmin = data.isAdmin;
             this.chosenMosqueId = data.chosenMosqueId;
+            this.chosenMosqueName = data.chosenMosqueName;
             this.loggedIn();
             router.push("/");
           }

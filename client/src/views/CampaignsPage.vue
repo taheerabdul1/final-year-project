@@ -65,11 +65,39 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.campaign-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .card {
-  margin: 0 auto;
-  margin-top: 1%;
-  width: 32%;
-  border-radius: 5px;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 16px;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.card-title {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.card-text {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.status {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+button {
+  margin-right: 8px;
 }
 
 @media screen and (max-width: 768px) {

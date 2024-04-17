@@ -1,11 +1,11 @@
 <template>
-  <h1>Manage Campaigns</h1>
-  <h2>Create Campaign</h2>
+  <h2>Campaigns</h2>
+  <h3>Create Campaign</h3>
   <p>
     To create a campaign,
     <button class="btn btn-primary" @click="addCampaign()">Click here</button>
   </p>
-  <h2>View Campaigns</h2>
+  <h3>View Campaigns</h3>
   <p>Below are the campaigns for the mosque you are administrating</p>
   <div class="campaign-list">
     <div class="card" v-for="campaign in campaigns" :key="campaign._id">
@@ -49,7 +49,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h1 class="modal-title fs-5" id="updateCampaignModalLabel">
-                Update user info here
+                Update campaign information
               </h1>
               <button
                 type="button"
@@ -230,3 +230,45 @@ export default {
   },
 };
 </script>
+<style scoped>
+.campaign-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card {
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 16px;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.card-title {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.card-text {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.status {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+button {
+  margin-right: 8px;
+}
+
+@media screen and (max-width: 768px) {
+  .card {
+    width: 99%;
+  }
+}
+</style>

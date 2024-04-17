@@ -7,7 +7,7 @@
   <h3>Name: {{ user.name }}</h3>
   <h3>Username: {{ user.username }}</h3>
   <h3>Email: {{ user.email }}</h3>
-  <h3>Chosen Mosque: {{ chosenMosqueName }}</h3>
+  <h3>Chosen Mosque: {{ user.chosenMosqueName }}</h3>
   <button
     class="btn btn-primary"
     data-bs-toggle="modal"
@@ -43,7 +43,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="exampleModalLabel">
-            Update user info here
+            Update user information
           </h1>
           <button
             type="button"
@@ -141,7 +141,6 @@ export default {
     return {
       mosques: [],
       donations: [],
-      chosenMosqueName: "",
     };
   },
   created() {
@@ -167,17 +166,6 @@ export default {
       })
       .then((data) => {
         this.donations = data;
-      });
-    fetch(`/api/mosques/${this.user.chosenMosqueId}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw response;
-        } else {
-          return response.json();
-        }
-      })
-      .then((data) => {
-        this.chosenMosqueName = data.name;
       });
   },
   methods: {

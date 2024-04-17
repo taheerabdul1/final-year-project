@@ -1,5 +1,5 @@
 <template>
-  <h1>Donate to {{ chosenMosqueName }}</h1>
+  <h1>Donate to {{ user.chosenMosqueName }}</h1>
   <p>Fill in the form below to make a donation <br> We thank you for your generosity!
   <br>To change the mosque you wish to donate to, edit your profle.</p>
   <form @submit.prevent="submitDonation">
@@ -68,21 +68,6 @@ export default {
       })
       .then((data) => {
         this.users = data;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
-    fetch(`/api/mosques/${this.user.chosenMosqueId}`)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error(response.status);
-        }
-      })
-      .then((data) => {
-        this.chosenMosqueName = data.name;
       })
       .catch((error) => {
         console.error(error);

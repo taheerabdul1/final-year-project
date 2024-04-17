@@ -7,7 +7,7 @@
     </div>
     <div class="mb-3">
       <label for="description" class="form-label">Descrption</label>
-      <input class="form-control" v-model="description" type="text" required />
+      <textarea class="form-control" name="description" id="description" v-model="description" type="text"></textarea>
     </div>
     <div class="mb-3">
       <label for="goal" class="form-label">Goal</label>
