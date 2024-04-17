@@ -2,7 +2,8 @@
   <h1>Manage Campaigns</h1>
   <h2>Create Campaign</h2>
   <p>
-    To create a campaign, <button class="btn btn-primary" @click="addCampaign()">Click here</button>
+    To create a campaign,
+    <button class="btn btn-primary" @click="addCampaign()">Click here</button>
   </p>
   <h2>View Campaigns</h2>
   <p>Below are the campaigns for the mosque you are administrating</p>
@@ -32,6 +33,9 @@
           data-bs-target="#updateCampaignModal"
         >
           Update
+        </button>
+        <button class="btn btn-danger" @click="deleteCampaign(campaign)">
+          Delete
         </button>
       </div>
       <div
@@ -152,7 +156,7 @@ export default {
       .catch((err) => console.log(err));
   },
   methods: {
-    addCampaign(){
+    addCampaign() {
       this.$router.push("/addCampaign");
     },
     formatDate(date) {
@@ -198,6 +202,29 @@ export default {
         })
         .catch((err) => {
           alert(`uh oh, theres a problem\n${err.status}: ${err.statusText}`);
+        });
+    },
+    deleteCampaign(campaign) {
+      console.log(JSON.stringify(campaign));
+      fetch(`/api/campaigns/${campaign._id}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(campaign),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (!data.success) {
+            alert(data.error);
+          } else {
+            alert(data.message);
+            window.location.reload();
+          }
+        })
+        .catch((error) => {
+          alert(error.toString());
         });
     },
   },

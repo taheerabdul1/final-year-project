@@ -1,5 +1,5 @@
 {
-  "name": "backend-new",
+  "name": "server",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,7 +7,7 @@
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "nodemon index.js",
     "client": "cd ../client && npm run serve"
-  },  
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

@@ -75,7 +75,7 @@ const donationSchema = new mongoose.Schema({
   amount: Number,
   donor: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
   mosque: { type: mongoose.Schema.Types.ObjectId, ref: "Mosque" },
-  campaign: {type: mongoose.Schema.Types.ObjectId, ref: 'Campaign'},
+  campaign: { type: mongoose.Schema.Types.ObjectId, ref: "Campaign" },
 });
 
 const campaignSchema = new mongoose.Schema({
@@ -211,14 +211,14 @@ app.get("/api/donations", async (req, res) => {
 app.post("/api/donations", async (req, res) => {
   if (req.user) {
     try {
-      const { amount, donor, mosque, campaign} = req.body;
+      const { amount, donor, mosque, campaign } = req.body;
       const newDonation = new Donation({ amount, donor, mosque, campaign });
       await newDonation.save();
 
       // Update the campaign's raisedAmount
       await Campaign.findByIdAndUpdate(campaign, {
         $inc: { raisedAmount: amount }, // Increment raisedAmount by the donated amount
-        $addToSet: { donors: donor } // Add donor to the donors array if not already present
+        $addToSet: { donors: donor }, // Add donor to the donors array if not already present
       });
 
       res.json(newDonation);
@@ -348,7 +348,7 @@ app.put("/api/users/:id", async (req, res) => {
 app.get("/api/users/:mosqueId", async (req, res) => {
   if (req.user) {
     try {
-      const users = await User.find({chosenMosqueId:req.params.mosqueId});
+      const users = await User.find({ chosenMosqueId: req.params.mosqueId });
       res.json(users);
     } catch (error) {
       console.error(error);
@@ -357,7 +357,7 @@ app.get("/api/users/:mosqueId", async (req, res) => {
   } else {
     res.status(401).json({ error: "User not authenticated" });
   }
-})
+});
 
 app.get("/api/campaigns", async (req, res) => {
   try {
@@ -371,9 +371,9 @@ app.get("/api/campaigns", async (req, res) => {
 app.get("/api/campaigns/:mosqueId", async (req, res) => {
   try {
     let campaigns = await Campaign.find({ mosque: req.params.mosqueId })
-    .populate("createdBy", "name")
-    .populate("donors", "name")
-    .populate("mosque", "name");
+      .populate("createdBy", "name")
+      .populate("donors", "name")
+      .populate("mosque", "name");
     return res.json(campaigns);
   } catch (err) {
     return res.status(400).send("Error getting campaigns");
@@ -396,37 +396,58 @@ app.post("/api/campaigns", async (req, res) => {
   });
   try {
     const savedCampaign = await newCampaign.save();
-    res.status(201).json({success:true,savedCampaign});
+    res.status(201).json({ success: true, savedCampaign });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 });
 
 app.put("/api/campaigns/:campaignId", async (req, res) => {
-  try{
-    let updatedCampaign = await Campaign.findByIdAndUpdate(req.params.campaignId, {
-      name: req.body.name,
-      description: req.body.description,
-      goal: req.body.goal,
-      startDate: req.body.startDate,
-      endDate: req.body.endDate
-    })
-    let campaigns = await Campaign.find({mosque: req.body.mosque._id})
-    .populate("createdBy", "name")
-    .populate("donors", "name")
-    .populate("mosque", "name");
+  try {
+    let updatedCampaign = await Campaign.findByIdAndUpdate(
+      req.params.campaignId,
+      {
+        name: req.body.name,
+        description: req.body.description,
+        goal: req.body.goal,
+        startDate: req.body.startDate,
+        endDate: req.body.endDate,
+      }
+    );
+    let campaigns = await Campaign.find({ mosque: req.body.mosque._id })
+      .populate("createdBy", "name")
+      .populate("donors", "name")
+      .populate("mosque", "name");
     return res.json({
       message: "Campaign information updated successfully",
       campaigns: campaigns,
       success: true,
     });
-  } catch (e){
+  } catch (e) {
     console.log(e);
     return res.status(500).json({
-        error: e
+      error: e,
     });
   }
-})
+});
+
+app.delete("/api/campaigns/:id", async (req, res) => {
+  if (req.user.isAdmin) {
+    try {
+      await Campaign.deleteOne({ _id: req.params.id });
+      await Donation.deleteMany({ campaign: req.params.id });
+      return res.status(200).json({
+        message: `Deleted the campaign with id ${req.params.id}`,
+        success: true,
+      });
+    } catch (e) {
+      console.log(e);
+      return res.json({
+        error: e,
+      });
+    }
+  }
+});
 
 app.post("/api/register", async (req, res) => {
   const adminPasscode = process.env.PASSCODE; // Retrieve the passcode from environment variables
