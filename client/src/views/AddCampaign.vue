@@ -7,7 +7,13 @@
     </div>
     <div class="mb-3">
       <label for="description" class="form-label">Descrption</label>
-      <textarea class="form-control" name="description" id="description" v-model="description" type="text"></textarea>
+      <textarea
+        class="form-control"
+        name="description"
+        id="description"
+        v-model="description"
+        type="text"
+      ></textarea>
     </div>
     <div class="mb-3">
       <label for="goal" class="form-label">Goal</label>
@@ -67,8 +73,8 @@ export default {
         .then((res) => res.json())
         .then((data) => {
           if (data.success) {
-            alert("Kampanyaya başarıyla eklendi.");
-            this.$router.push("/campaigns"); 
+            alert("Announcement added successfully.");
+            this.$router.push("/campaigns");
           }
         })
         .catch((err) => console.log(err));

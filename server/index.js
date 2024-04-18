@@ -7,6 +7,9 @@ import session from "express-session";
 import passport from "passport";
 import passportLocalMongoose from "passport-local-mongoose";
 import MongoStore from "connect-mongo";
+import PDFDocument from "pdfkit";
+import fs from "fs";
+import json2csv from "json2csv";
 dotenv.config();
 const app = express();
 const port = 3000;
@@ -309,6 +312,79 @@ app.get("/api/mosqueAllDonations/:mosqueId", async (req, res) => {
   }
 });
 
+app.get("/api/mosqueDonations/:mosqueId", async (req, res) => {
+  try {
+    const mosqueId = req.params.mosqueId;
+
+    // Fetch donations for the specified mosque
+    const donations = await Donation.find({ mosque: mosqueId })
+      .populate("donor", "name")
+      .populate("campaign", "name");
+
+    const csvHeader = "Amount,Donor,Campaign\n";
+
+    // Convert donations to CSV format
+    const csvRows = donations.map((donation) => {
+      return `${donation.amount},${donation.donor.name},${donation.campaign}`;
+    });
+
+    const csvData = [csvHeader, ...csvRows].join("\n");
+
+    // Set response headers for CSV download
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="donations.csv"'
+    );
+
+    // Send the CSV data
+    res.send(csvData);
+  } catch (error) {
+    console.error("Error fetching donations:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/api/campaigns/report/:campaignId", async (req, res) => {
+  try {
+    const campaign = await Campaign.findOne({ _id: req.params.campaignId });
+    console.log(campaign);
+    const donations = await Donation.find({ campaign: campaign._id })
+      .populate("donor", "name")
+      .populate("campaign", "name")
+      .exec();
+
+    // Create a new PDF document
+    const doc = new PDFDocument();
+
+    // Pipe its output somewhere, like to a file or HTTP response
+    // Here we're writing to a file
+    const stream = fs.createWriteStream(`${__dirname}/output.pdf`);
+    doc.pipe(stream);
+
+    // Add content to the PDF
+    doc.text(`Donations Report for Campaign: ${campaign.name}`, {
+      align: "center",
+    });
+
+    // List donations
+    donations.forEach((donation) => {
+      doc.text(`Donor: ${donation.donor.name}, Amount: ${donation.amount}`);
+    });
+
+    // Finalize PDF file
+    doc.end();
+
+    // Wait for the stream to finish to send the file
+    stream.on("finish", () => {
+      res.sendFile(`${__dirname}/output.pdf`);
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Server Error");
+  }
+});
+
 app.get("/api/users", async (req, res) => {
   if (req.user) {
     try {
@@ -503,7 +579,7 @@ app.post("/api/announcements", async (req, res) => {
       content,
       createdBy,
     });
-    res.status(201).json(announcement);
+    res.status(201).json({ success: true, announcement });
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
@@ -511,29 +587,34 @@ app.post("/api/announcements", async (req, res) => {
 
 app.delete("/api/announcements/:id", async (req, res) => {
   try {
+    const replies = await Announcement.findById(req.params.id)
+      .select("replies")
+      .populate("replies", "name");
+    replies.replies.forEach((reply) => {
+      Reply.findByIdAndDelete(reply._id);
+    });
     const annoucement = await Announcement.findByIdAndDelete(req.params.id);
-    if (!annoucement)
-      return res.status(404).json({ notfound: "No such announcement exist." });
-    else {
-      res.json({ success: true });
-    }
+    return res.status(200).json({
+      message: `Deleted the announcement with id ${req.params.id}`,
+      success: true,
+    });
   } catch (e) {
+    console.log(e);
     res.status(400).send("Error Occured");
   }
 });
 
 app.put("/api/announcements/:id", async (req, res) => {
-  const { title, content } = req.body;
   try {
     const announcement = await Announcement.findByIdAndUpdate(req.params.id, {
-      title,
-      content,
+      title: req.body.title,
+      content: req.body.content,
     });
     if (!announcement)
       return res.status(404).json({ notfound: "Announcement not found!" });
-    else return res.json(announcement);
+    else return res.json({ success: true });
   } catch (e) {
-    res.status(400).send();
+    res.status(500).json({ error: err.message });
   }
 });
 

@@ -8,10 +8,11 @@ import MosquesPage from "../views/MosquesPage.vue";
 import AdminDashboard from "../views/AdminDashboard.vue";
 import CampaignsPage from "../views/CampaignsPage.vue";
 import ErrorPage from "../views/ErrorPage.vue";
-import AccessDenied from "../views/AccessDenied.vue"
+import AccessDenied from "../views/AccessDenied.vue";
 import AddCampaign from "../views/AddCampaign.vue";
 import { useUserStore } from "../store/index";
-import AnnouncementsPage from "@/views/AnnouncementsPage.vue";
+import AnnouncementsPage from "../views/AnnouncementsPage.vue";
+import AddAnnouncement from "../views/AddAnnouncement.vue";
 
 const routes = [
   {
@@ -28,9 +29,9 @@ const routes = [
       if (user.isLoggedIn) {
         next();
       } else {
-        next({ name: 'denied' });
+        next({ name: "denied" });
       }
-    }
+    },
   },
   {
     path: "/profile",
@@ -41,9 +42,9 @@ const routes = [
       if (user.isLoggedIn) {
         next();
       } else {
-        next({ name: 'denied' });
+        next({ name: "denied" });
       }
-    }
+    },
   },
   {
     path: "/mosquesInfo",
@@ -54,9 +55,9 @@ const routes = [
       if (user.isLoggedIn) {
         next();
       } else {
-        next({ name: 'denied' });
+        next({ name: "denied" });
       }
-    }
+    },
   },
   {
     path: "/campaigns",
@@ -67,9 +68,9 @@ const routes = [
       if (user.isLoggedIn) {
         next();
       } else {
-        next({ name: 'denied' });
+        next({ name: "denied" });
       }
-    }
+    },
   },
   {
     path: "/announcements",
@@ -80,9 +81,9 @@ const routes = [
       if (user.isLoggedIn) {
         next();
       } else {
-        next({ name: 'denied' });
+        next({ name: "denied" });
       }
-    }
+    },
   },
   {
     path: "/addCampaign",
@@ -93,22 +94,35 @@ const routes = [
       if (user.isAdmin) {
         next();
       } else {
-        next({ name: 'denied' });
+        next({ name: "denied" });
       }
-    }
+    },
+  },
+  {
+    path: "/addAnnouncement",
+    name: "addAnnouncement",
+    component: AddAnnouncement,
+    beforeEnter: (to, from, next) => {
+      const user = useUserStore();
+      if (user.isAdmin) {
+        next();
+      } else {
+        next({ name: "denied" });
+      }
+    },
   },
   {
     path: "/adminDashboard",
-    name:"adminDashboard",
+    name: "adminDashboard",
     component: AdminDashboard,
     beforeEnter: (to, from, next) => {
       const user = useUserStore();
       if (user.isAdmin) {
         next();
       } else {
-        next({ name: 'denied' });
+        next({ name: "denied" });
       }
-    }
+    },
   },
   {
     path: "/register",
@@ -119,9 +133,9 @@ const routes = [
       if (!user.isLoggedIn) {
         next();
       } else {
-        next({ name: 'home' });
+        next({ name: "home" });
       }
-    }
+    },
   },
   {
     path: "/login",
@@ -132,19 +146,19 @@ const routes = [
       if (!user.isLoggedIn) {
         next();
       } else {
-        next({ name: 'home' });
+        next({ name: "home" });
       }
-    }
+    },
   },
   {
-    path: '/denied',
+    path: "/denied",
     name: "denied",
     component: AccessDenied,
   },
   {
-    path: '/:catchAll(.*)',
-    component: ErrorPage
-  }
+    path: "/:catchAll(.*)",
+    component: ErrorPage,
+  },
 ];
 
 const router = createRouter({

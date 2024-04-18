@@ -1,18 +1,26 @@
 <template>
-    <h1>Announcements</h1>
-    <div v-for="announcement in announcements" :key="announcement._id">
-      <div class="card mb-3">
-        <div class="card-body">
-          <h3 class="card-title">{{ announcement.title }}</h3>
-          <p class="card-text">{{ formatDate(announcement.createdAt) }} by {{ announcement.createdBy.name }}</p>
-          <div class="mt-3">
-            <ReplyList :replies="announcement.replies" :announcementId="announcement._id" />
-            <h4>Reply to this announcement here:</h4>
-            <ReplyForm :announcementId="announcement._id" />
-          </div>
+  <h1>Announcements</h1>
+  <div v-for="announcement in announcements" :key="announcement._id">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h3 class="card-title">{{ announcement.title }}</h3>
+        <p class="card-text">
+          {{ formatDate(announcement.createdAt) }} by
+          {{ announcement.createdBy.name }}
+        </p>
+        <p class="card-text">{{ announcement.content }}</p>
+        <h5>Replies</h5>
+        <div class="mt-3">
+          <ReplyList
+            :replies="announcement.replies"
+            :announcementId="announcement._id"
+          />
+          <h4>Reply to this announcement here:</h4>
+          <ReplyForm :announcementId="announcement._id" />
         </div>
       </div>
     </div>
+  </div>
 </template>
 
 <script>

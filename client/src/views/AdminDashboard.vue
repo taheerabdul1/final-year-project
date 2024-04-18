@@ -1,9 +1,15 @@
 <template>
   <div class="users-table">
     <h1>Admin Dashboard</h1>
-    <p>You are administrator for the following mosque:  {{user.chosenMosqueName}}.</p>
-    <p>The following users are registered to make donations to {{ user.chosenMosqueName }}.</p>
+    <p>
+      You are administrator for the following mosque:
+      {{ user.chosenMosqueName }}.
+    </p>
     <h2>Users</h2>
+    <p>
+      The following users are registered to make donations to
+      {{ user.chosenMosqueName }}.
+    </p>
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -25,6 +31,7 @@
       </table>
     </div>
     <h2>Donations</h2>
+    <p>The following donations have been made to {{ user.chosenMosqueName }}</p>
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -46,7 +53,8 @@
       </table>
     </div>
   </div>
-  <ManageCampaigns/>
+  <ManageCampaigns />
+  <ManageAnnouncements />
 </template>
 <style>
 .users-table {
@@ -56,23 +64,25 @@
 }
 </style>
 <script>
-import { useUserStore } from '../store/index';
-import ManageCampaigns from '../components/ManageCampaigns.vue'
+import { useUserStore } from "../store/index";
+import ManageCampaigns from "../components/ManageCampaigns.vue";
+import ManageAnnouncements from "../components/ManageAnnouncements.vue";
 export default {
   name: "AdminDashboard",
   components: {
     ManageCampaigns,
+    ManageAnnouncements,
   },
   setup() {
     const user = useUserStore();
     return {
       user,
-    }
+    };
   },
   data() {
     return {
       users: [],
-      mosque:[],
+      mosque: [],
       donations: [],
     };
   },
@@ -91,20 +101,20 @@ export default {
       .catch((error) => {
         console.error(error);
       });
-      fetch(`/api/mosqueAllDonations/${this.user.chosenMosqueId}`)
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw new Error(response.status);
-          }
-        })
-        .then((data) => {
-          this.donations = data;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+    fetch(`/api/mosqueAllDonations/${this.user.chosenMosqueId}`)
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error(response.status);
+        }
+      })
+      .then((data) => {
+        this.donations = data;
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   },
 };
 </script>
