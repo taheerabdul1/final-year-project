@@ -283,7 +283,8 @@ app.get("/api/userDonations/:userId", async (req, res) => {
     try {
       const donations = await Donation.find({ donor: userId })
         .populate("donor", "name")
-        .populate("mosque", "name");
+        .populate("mosque", "name")
+        .populate("campaign", "name");
       res.json(donations);
     } catch (error) {
       console.error(error);

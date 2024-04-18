@@ -22,12 +22,14 @@
         <tr>
           <th>Amount</th>
           <th>Mosque</th>
+          <th>Campaign</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="donation in donations" :key="donation._id">
           <td>{{ donation.amount }}</td>
           <td>{{ donation.mosque.name }}</td>
+          <td>{{ donation.campaign?.name || null }}</td>
         </tr>
       </tbody>
     </table>
