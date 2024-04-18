@@ -342,12 +342,16 @@ app.post("/api/users", async (req, res) => {
 app.put("/api/users/:id", async (req, res) => {
   if (req.user) {
     try {
-      const updatedUser = await User.findByIdAndUpdate(req.params.id, {
-        username: req.body.username,
-        name: req.body.name,
-        email: req.body.email,
-        chosenMosqueId: req.body.chosenMosqueId,
-      });
+      const updatedUser = await User.findByIdAndUpdate(
+        req.params.id,
+        {
+          username: req.body.updatedUser.username,
+          name: req.body.updatedUser.name,
+          email: req.body.updatedUser.email,
+          chosenMosqueId: req.body.updatedUser.chosenMosqueId,
+        },
+        { new: true }
+      );
       req.session.passport.user = updatedUser.username;
       req.login(updatedUser, (loginErr) => {
         if (loginErr) {
@@ -476,14 +480,14 @@ app.delete("/api/campaigns/:id", async (req, res) => {
 app.get("/api/announcements", async (req, res) => {
   try {
     const announcements = await Announcement.find()
-    .populate('createdBy', 'name') // replace 'name' with the actual field name for the user's name
-    .populate({
-       path: 'replies',
-       populate: {
-         path: 'createdBy',
-         select: 'name' // replace 'name' with the actual field name for the user's name
-       }
-     })
+      .populate("createdBy", "name") // replace 'name' with the actual field name for the user's name
+      .populate({
+        path: "replies",
+        populate: {
+          path: "createdBy",
+          select: "name", // replace 'name' with the actual field name for the user's name
+        },
+      });
     res.json({ success: true, announcements: announcements });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -553,9 +557,10 @@ app.post("/api/replies/:announcementId", async (req, res) => {
       content: req.body.content,
       createdBy: req.user._id,
     });
-    const announcement = await Announcement.findByIdAndUpdate(req.params.announcementId,
-    { $addToSet: { replies: reply } },
-    { new: true }
+    const announcement = await Announcement.findByIdAndUpdate(
+      req.params.announcementId,
+      { $addToSet: { replies: reply } },
+      { new: true }
     );
     res.json({ success: true, announcement, reply });
   } catch (e) {

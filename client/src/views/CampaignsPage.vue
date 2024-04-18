@@ -29,23 +29,10 @@ export default {
   },
   data() {
     return {
-      chosenMosqueName: "",
       campaignList: [],
     };
   },
   created() {
-    fetch(`/api/mosques/${this.user.chosenMosqueId}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw response;
-        } else {
-          return response.json();
-        }
-      })
-      .then((data) => {
-        this.chosenMosqueName = data.name;
-      });
-    // Fetch all campaigns and filter them by the chosen mosque id.
     fetch(`/api/campaigns/${this.user.chosenMosqueId}`)
       .then(function (response) {
         return response.json();

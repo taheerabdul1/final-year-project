@@ -177,14 +177,14 @@ export default {
         email: this.user.email,
         isAdmin: this.user.isAdmin,
         chosenMosqueId: this.user.chosenMosqueId,
-      }
-      fetch(`/api/users/${id}`, {
+      };
+      await fetch(`/api/users/${id}`, {
         method: "PUT",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({updatedUser}),
+        body: JSON.stringify({ updatedUser }),
       })
         .then((response) => {
           if (!response.ok) {
@@ -195,6 +195,7 @@ export default {
         .then((data) => {
           if (data.success) {
             alert("User updated successfully!");
+            this.user.loggedIn();
             this.$router.push("/");
           } else {
             throw new Error(data.message || "Failed to update user");
