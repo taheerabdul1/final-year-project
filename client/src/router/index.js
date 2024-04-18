@@ -11,6 +11,7 @@ import ErrorPage from "../views/ErrorPage.vue";
 import AccessDenied from "../views/AccessDenied.vue"
 import AddCampaign from "../views/AddCampaign.vue";
 import { useUserStore } from "../store/index";
+import AnnouncementsPage from "@/views/AnnouncementsPage.vue";
 
 const routes = [
   {
@@ -61,6 +62,19 @@ const routes = [
     path: "/campaigns",
     name: "campaigns",
     component: CampaignsPage,
+    beforeEnter: (to, from, next) => {
+      const user = useUserStore();
+      if (user.isLoggedIn) {
+        next();
+      } else {
+        next({ name: 'denied' });
+      }
+    }
+  },
+  {
+    path: "/announcements",
+    name: "announcements",
+    component: AnnouncementsPage,
     beforeEnter: (to, from, next) => {
       const user = useUserStore();
       if (user.isLoggedIn) {

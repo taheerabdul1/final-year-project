@@ -46,6 +46,13 @@
             >View Campaigns</router-link
           >
           <router-link
+            v-if="user.isLoggedIn"
+            @click="closeNavbar"
+            class="nav-item nav-link"
+            to="/announcements"
+            >View Announcements</router-link
+          >
+          <router-link
             v-if="user.isLoggedIn&&user.isAdmin"
             @click="closeNavbar"
             class="nav-item nav-link"

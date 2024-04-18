@@ -120,6 +120,28 @@ const campaignSchema = new mongoose.Schema({
   ],
 });
 
+const announcementSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  content: { type: String, required: true },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  createdAt: { type: Date, default: Date.now },
+  replies: [{ type: mongoose.Schema.Types.ObjectId, ref: "Reply" }],
+});
+
+const replySchema = new mongoose.Schema({
+  content: { type: String, required: true },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  createdAt: { type: Date, default: Date.now },
+});
+
 //not sure what this does
 //read below
 /*
@@ -140,6 +162,8 @@ const Mosque = new mongoose.model("Mosque", mosqueSchema);
 const User = new mongoose.model("User", userSchema);
 const Donation = new mongoose.model("Donation", donationSchema);
 const Campaign = new mongoose.model("Campaign", campaignSchema);
+const Announcement = new mongoose.model("Announcement", announcementSchema);
+const Reply = new mongoose.model("Reply", replySchema);
 
 //connect passport with user database
 passport.use(User.createStrategy());
@@ -449,6 +473,97 @@ app.delete("/api/campaigns/:id", async (req, res) => {
   }
 });
 
+app.get("/api/announcements", async (req, res) => {
+  try {
+    const announcements = await Announcement.find()
+    .populate('createdBy', 'name') // replace 'name' with the actual field name for the user's name
+    .populate({
+       path: 'replies',
+       populate: {
+         path: 'createdBy',
+         select: 'name' // replace 'name' with the actual field name for the user's name
+       }
+     })
+    res.json({ success: true, announcements: announcements });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post("/api/announcements", async (req, res) => {
+  const { title, content } = req.body;
+  const createdBy = req.user._id; // Assuming user ID is stored in req.user
+  try {
+    const announcement = await Announcement.create({
+      title,
+      content,
+      createdBy,
+    });
+    res.status(201).json(announcement);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+app.delete("/api/announcements/:id", async (req, res) => {
+  try {
+    const annoucement = await Announcement.findByIdAndDelete(req.params.id);
+    if (!annoucement)
+      return res.status(404).json({ notfound: "No such announcement exist." });
+    else {
+      res.json({ success: true });
+    }
+  } catch (e) {
+    res.status(400).send("Error Occured");
+  }
+});
+
+app.put("/api/announcements/:id", async (req, res) => {
+  const { title, content } = req.body;
+  try {
+    const announcement = await Announcement.findByIdAndUpdate(req.params.id, {
+      title,
+      content,
+    });
+    if (!announcement)
+      return res.status(404).json({ notfound: "Announcement not found!" });
+    else return res.json(announcement);
+  } catch (e) {
+    res.status(400).send();
+  }
+});
+
+app.get("/api/replies/:announcementId", async (req, res) => {
+  try {
+    const replies = await Reply.find({
+      announcement: req.params.announcementId,
+    })
+      .populate("createdBy", "name")
+      .sort("createdAt");
+    res.json(replies);
+  } catch (e) {
+    console.log(e);
+    res.status(500).json("Server Error");
+  }
+});
+
+app.post("/api/replies/:announcementId", async (req, res) => {
+  try {
+    const reply = await Reply.create({
+      content: req.body.content,
+      createdBy: req.user._id,
+    });
+    const announcement = await Announcement.findByIdAndUpdate(req.params.announcementId,
+    { $addToSet: { replies: reply } },
+    { new: true }
+    );
+    res.json({ success: true, announcement, reply });
+  } catch (e) {
+    console.error(e);
+    res.status(400).json({ msg: e });
+  }
+});
+
 app.post("/api/register", async (req, res) => {
   const adminPasscode = process.env.PASSCODE; // Retrieve the passcode from environment variables
   const enteredPasscode = req.body.adminPasscode; // The passcode entered by the user
@@ -487,7 +602,10 @@ app.post(
   "/api/login",
   passport.authenticate("local", { failureMessage: true }),
   async (req, res) => {
-    const chosenMosqueName = await Mosque.findById(req.user.chosenMosqueId, "name");
+    const chosenMosqueName = await Mosque.findById(
+      req.user.chosenMosqueId,
+      "name"
+    );
     res.json({
       success: true,
       _id: req.user._id,
@@ -503,7 +621,10 @@ app.post(
 
 app.get("/api/profile", async (req, res) => {
   if (req.isAuthenticated()) {
-    const chosenMosqueName = await Mosque.findById(req.user.chosenMosqueId, "name");
+    const chosenMosqueName = await Mosque.findById(
+      req.user.chosenMosqueId,
+      "name"
+    );
     res.json({
       _id: req.user._id,
       username: req.user.username,
@@ -520,7 +641,10 @@ app.get("/api/profile", async (req, res) => {
 
 app.get("/api/loggedIn", async (req, res) => {
   if (req.isAuthenticated()) {
-    const chosenMosqueName = await Mosque.findById(req.user.chosenMosqueId, "name");
+    const chosenMosqueName = await Mosque.findById(
+      req.user.chosenMosqueId,
+      "name"
+    );
     res.json({
       success: req.isAuthenticated(),
       _id: req.user._id,
