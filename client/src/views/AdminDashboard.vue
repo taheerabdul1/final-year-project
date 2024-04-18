@@ -32,6 +32,14 @@
     </div>
     <h2>Donations</h2>
     <p>The following donations have been made to {{ user.chosenMosqueName }}</p>
+    <div class="button-container">
+      <button class="btn btn-success" @click="generateDonationsCSV()">
+        Generate CSV Report
+      </button>
+      <button class="btn btn-danger" @click="generateDonationsPDF()">
+        Generate PDF Report
+      </button>
+    </div>
     <div class="table-responsive">
       <table class="table">
         <thead>
@@ -40,6 +48,7 @@
             <th>Amount</th>
             <th>Donor Name</th>
             <th>Mosque</th>
+            <th>Campaign</th>
           </tr>
         </thead>
         <tbody>
@@ -48,6 +57,9 @@
             <td>{{ donation.amount }}</td>
             <td>{{ donation.donor.name }}</td>
             <td>{{ donation.mosque.name }}</td>
+            <td>
+              {{ donation.campaign?.name || "No Campaign" }}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -61,6 +73,14 @@
   width: 80vw;
   margin: 0 auto;
   /* padding: 20px; */
+}
+
+.button-container {
+  margin-bottom: 10px;
+}
+
+.button-container button {
+  margin-right: 10px; /* Add this line to add space between the buttons */
 }
 </style>
 <script>
@@ -110,11 +130,38 @@ export default {
         }
       })
       .then((data) => {
+        console.log(data);
         this.donations = data;
       })
       .catch((error) => {
         console.error(error);
       });
+  },
+  methods: {
+    async generateDonationsCSV() {
+      await fetch(`/api/reports/donations/csv/${this.user.chosenMosqueId}`)
+        .then((response) => response.blob())
+        .then((blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "donations.csv";
+          a.click();
+          window.URL.revokeObjectURL(url);
+        });
+    },
+    async generateDonationsPDF() {
+      await fetch(`/api/reports/donations/pdf/${this.user.chosenMosqueId}`)
+        .then((response) => response.blob())
+        .then((blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "donations.pdf";
+          a.click();
+          window.URL.revokeObjectURL(url);
+        });
+    },
   },
 };
 </script>

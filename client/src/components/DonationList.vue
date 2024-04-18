@@ -28,7 +28,7 @@ export default {
     };
   },
   created() {
-    fetch(`/api/donations`) 
+    fetch(`/api/donations`)
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -51,6 +51,6 @@ export default {
 .donation-list {
   max-width: 80vw;
   margin: 0 auto;
-  padding: 20px;
+  /* padding: 20px; */
 }
 </style>

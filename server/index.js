@@ -301,7 +301,8 @@ app.get("/api/mosqueAllDonations/:mosqueId", async (req, res) => {
       const donations = await Donation.find({ mosque: mosqueId })
         .sort([["createdAt", -1]])
         .populate("donor", "name")
-        .populate("mosque", "name");
+        .populate("mosque", "name")
+        .populate("campaign", "name");
       res.json(donations);
     } catch (err) {
       console.log(err);
@@ -312,12 +313,9 @@ app.get("/api/mosqueAllDonations/:mosqueId", async (req, res) => {
   }
 });
 
-app.get("/api/mosqueDonations/:mosqueId", async (req, res) => {
+app.get("/api/reports/donations/csv/:mosqueId", async (req, res) => {
   try {
-    const mosqueId = req.params.mosqueId;
-
-    // Fetch donations for the specified mosque
-    const donations = await Donation.find({ mosque: mosqueId })
+    const donations = await Donation.find({ mosque: req.params.mosqueId })
       .populate("donor", "name")
       .populate("campaign", "name");
 
@@ -325,7 +323,9 @@ app.get("/api/mosqueDonations/:mosqueId", async (req, res) => {
 
     // Convert donations to CSV format
     const csvRows = donations.map((donation) => {
-      return `${donation.amount},${donation.donor.name},${donation.campaign}`;
+      return `${donation.amount},${donation.donor.name},${
+        donation.campaign?.name || null
+      }`;
     });
 
     const csvData = [csvHeader, ...csvRows].join("\n");
@@ -345,11 +345,64 @@ app.get("/api/mosqueDonations/:mosqueId", async (req, res) => {
   }
 });
 
-app.get("/api/campaigns/report/:campaignId", async (req, res) => {
+app.get("/api/reports/donations/pdf/:mosqueId", async (req, res) => {
+  try {
+    const mosque = await Mosque.findById(req.params.mosqueId);
+    if (!mosque)
+      throw new Error(`Mosque ${req.params.mosqueId} does not exist`);
+    const donations = await Donation.find({ mosque: req.params.mosqueId })
+      .populate("donor", "name")
+      .populate("campaign", "name");
+    const doc = new PDFDocument();
+    const stream = fs.createWriteStream(`${__dirname}/output.pdf`);
+    doc.pipe(stream);
+    doc.text(`Donations Report for Mosque: ${mosque.name}`, {
+      align: "center",
+    });
+    donations.forEach((donation) => {
+      doc.text(
+        `Donor: ${donation.donor.name}, Amount: ${donation.amount}, Campaign: ${
+          donation.campaign?.name || null
+        }`
+      );
+    });
+    doc.end();
+    stream.on("finish", () => {
+      res.sendFile(`${__dirname}/output.pdf`);
+    });
+  } catch (error) {
+    console.error("Error fetching donations:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/api/reports/campaigns/csv/:campaignId", async (req, res) => {
+  try {
+    const donations = await Donation.find({ campaign: req.params.campaignId })
+      .populate("donor", "name")
+      .populate("campaign", "name")
+      .exec();
+    const csvHeader = "Amount,Donor\n";
+    const csvRows = donations.map((donation) => {
+      return `${donation.amount},${donation.donor.name}`;
+    });
+    const csvData = [csvHeader, ...csvRows].join("\n");
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="Campaign_' + campaign.name + '.csv"'
+    );
+    res.send(csvData);
+  } catch (error) {
+    console.log(error);
+    return res.status(422).send({ message: err.message });
+  }
+});
+
+app.get("/api/reports/campaigns/pdf/:campaignId", async (req, res) => {
   try {
     const campaign = await Campaign.findOne({ _id: req.params.campaignId });
-    console.log(campaign);
-    const donations = await Donation.find({ campaign: campaign._id })
+    const donations = await Donation.find({ campaign: req.params.campaignId })
       .populate("donor", "name")
       .populate("campaign", "name")
       .exec();

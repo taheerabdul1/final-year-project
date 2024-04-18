@@ -1,5 +1,6 @@
 <template>
   <h1>View Campaigns</h1>
+  <h2 v-if="campaignList.length == 0">Wow... so empty...</h2>
   <div class="campaign-list">
     <div class="card" v-for="campaign in campaignList" :key="campaign._id">
       <div class="card-body">

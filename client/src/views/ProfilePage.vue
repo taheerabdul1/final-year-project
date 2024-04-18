@@ -4,10 +4,10 @@
     Below are the details stored by FundMosque for this account. <br />
     Click the update button to update your details
   </p>
-  <h3>Name: {{ user.name }}</h3>
-  <h3>Username: {{ user.username }}</h3>
-  <h3>Email: {{ user.email }}</h3>
-  <h3>Chosen Mosque: {{ user.chosenMosqueName }}</h3>
+  <h5>Name: {{ user.name }}</h5>
+  <h5>Username: {{ user.username }}</h5>
+  <h5>Email: {{ user.email }}</h5>
+  <h5>Chosen Mosque: {{ user.chosenMosqueName }}</h5>
   <button
     class="btn btn-primary"
     data-bs-toggle="modal"
@@ -15,7 +15,7 @@
   >
     Update
   </button>
-
+  <h2>Your donation history</h2>
   <div class="donation-table" v-if="donations.length > 0">
     <table class="table">
       <thead>

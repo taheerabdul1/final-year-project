@@ -37,6 +37,13 @@
         <button class="btn btn-danger" @click="deleteCampaign(campaign)">
           Delete
         </button>
+        <br />
+        <button class="btn btn-success" @click="generateCampaignsCSV(campaign)">
+          Generate .csv report
+        </button>
+        <button class="btn btn-danger" @click="generateCampaignsPDF(campaign)">
+          Generate .pdf report
+        </button>
       </div>
       <div
         class="modal fade"
@@ -227,6 +234,30 @@ export default {
           alert(error.toString());
         });
     },
+    async generateCampaignsCSV(campaign) {
+      await fetch(`/api/reports/campaigns/csv/${campaign._id}`)
+        .then((response) => response.blob())
+        .then((blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "campaign.csv";
+          a.click();
+          window.URL.revokeObjectURL(url);
+        });
+    },
+    async generateCampaignsPDF(campaign) {
+      await fetch(`/api/reports/campaigns/pdf/${campaign._id}`)
+        .then((response) => response.blob())
+        .then((blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = "campaign.pdf";
+          a.click();
+          window.URL.revokeObjectURL(url);
+        });
+    },
   },
 };
 </script>
@@ -264,8 +295,8 @@ export default {
 
 button {
   margin-right: 8px;
+  margin-bottom: 8px; /* Add this line to add bottom margin */
 }
-
 @media screen and (max-width: 768px) {
   .card {
     width: 99%;

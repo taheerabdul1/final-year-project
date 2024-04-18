@@ -6,7 +6,6 @@
   <div>
     <div class="logout">
       <p v-if="user.isLoggedIn">You are logged in as {{ user.username }}</p>
-      <button class="btn btn-primary" @click="user.logout" v-if="user.isLoggedIn">Log Out</button>
     </div>
   </div>
   <div v-if="user.isLoggedIn">

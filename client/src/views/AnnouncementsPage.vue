@@ -1,5 +1,6 @@
 <template>
   <h1>Announcements</h1>
+  <h2 v-if="announcements.length == 0">Wow... so empty....</h2>
   <div v-for="announcement in announcements" :key="announcement._id">
     <div class="card mb-3">
       <div class="card-body">

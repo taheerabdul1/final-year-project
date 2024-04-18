@@ -1,7 +1,14 @@
 <template>
   <nav class="navbar navbar-expand-md bg-body-tertiary">
     <div class="container-fluid">
-      <a class="navbar-brand">FundMosque</a>
+      <router-link @click="closeNavbar" to="/" class="navbar-brand"
+        >FundMosque</router-link
+      >
+      <div class="navbar-nav ms-auto">
+        <a v-if="user.isLoggedIn" @click="user.logout" class="nav-item nav-link"
+          >Logout</a
+        >
+      </div>
       <button
         class="navbar-toggler"
         type="button"
@@ -14,9 +21,12 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" :class="{ 'show': isNavbarOpen }" id="navbarSupportedContent">
+      <div
+        class="collapse navbar-collapse"
+        :class="{ show: isNavbarOpen }"
+        id="navbarSupportedContent"
+      >
         <div class="navbar-nav mx-auto">
-          <router-link @click="closeNavbar" to="/" class="nav-item nav-link">Home</router-link>
           <router-link
             v-if="user.isLoggedIn"
             @click="closeNavbar"
@@ -53,7 +63,7 @@
             >View Announcements</router-link
           >
           <router-link
-            v-if="user.isLoggedIn&&user.isAdmin"
+            v-if="user.isLoggedIn && user.isAdmin"
             @click="closeNavbar"
             class="nav-item nav-link"
             to="/adminDashboard"
@@ -79,7 +89,7 @@
           id="darkModeButton"
           @click="toggleTheme"
         >
-        {{ theme === 'dark' ? 'Light Mode' : 'Dark Mode' }}
+          {{ theme === "dark" ? "Light Mode" : "Dark Mode" }}
         </button>
       </div>
     </div>
@@ -106,7 +116,7 @@ nav {
 }
 </style>
 <script>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref } from "vue";
 import { useUserStore } from "./store/index";
 export default {
   setup() {
@@ -132,13 +142,20 @@ export default {
       document.body.setAttribute("data-bs-theme", themeAttribute);
     };
 
-    onMounted(async() => {
+    onMounted(async () => {
       await user.loggedIn();
       theme.value = localStorage.getItem("theme") || "dark";
       applyTheme();
     });
 
-    return { user, isNavbarOpen, theme, toggleNavbar, closeNavbar, toggleTheme };
+    return {
+      user,
+      isNavbarOpen,
+      theme,
+      toggleNavbar,
+      closeNavbar,
+      toggleTheme,
+    };
   },
 };
 </script>
