@@ -38,6 +38,7 @@ export default {
       formData: {
         title: "",
         content: "",
+        mosque: this.user.chosenMosqueId,
       },
     };
   },

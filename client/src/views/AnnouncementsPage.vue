@@ -25,10 +25,17 @@
 </template>
 
 <script>
+import { useUserStore } from "../store/index";
 import ReplyList from "../components/ReplyList.vue";
 import ReplyForm from "../components/ReplyForm.vue";
 
 export default {
+  setup() {
+    const user = useUserStore();
+    return {
+      user,
+    };
+  },
   components: {
     ReplyList,
     ReplyForm,
@@ -39,7 +46,7 @@ export default {
     };
   },
   created() {
-    fetch("/api/announcements")
+    fetch(`/api/announcements/${this.user.chosenMosqueId}`)
       .then((response) => {
         if (response.ok) {
           return response.json();

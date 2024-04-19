@@ -91,7 +91,14 @@
 </template>
 
 <script>
+import { useUserStore } from "../store/index";
 export default {
+  setup() {
+    const user = useUserStore();
+    return {
+      user,
+    };
+  },
   data() {
     return {
       announcements: [],
@@ -107,7 +114,7 @@ export default {
   },
   methods: {
     async getAnnouncements() {
-      await fetch("/api/announcements")
+      await fetch(`/api/announcements/${this.user.chosenMosqueId}`)
         .then((response) => {
           if (response.ok) {
             return response.json();

@@ -126,6 +126,11 @@ const campaignSchema = new mongoose.Schema({
 const announcementSchema = new mongoose.Schema({
   title: { type: String, required: true },
   content: { type: String, required: true },
+  mosque: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Mosque",
+    required: true,
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -607,9 +612,12 @@ app.delete("/api/campaigns/:id", async (req, res) => {
   }
 });
 
-app.get("/api/announcements", async (req, res) => {
+app.get("/api/announcements/:mosqueId", async (req, res) => {
   try {
-    const announcements = await Announcement.find()
+    const announcements = await Announcement.find({
+      mosque: req.params.mosqueId,
+    })
+      .populate("mosque", "name")
       .populate("createdBy", "name") // replace 'name' with the actual field name for the user's name
       .populate({
         path: "replies",
@@ -625,13 +633,14 @@ app.get("/api/announcements", async (req, res) => {
 });
 
 app.post("/api/announcements", async (req, res) => {
-  const { title, content } = req.body;
+  const { title, content, mosque } = req.body;
   const createdBy = req.user._id; // Assuming user ID is stored in req.user
   try {
     const announcement = await Announcement.create({
       title,
       content,
       createdBy,
+      mosque,
     });
     res.status(201).json({ success: true, announcement });
   } catch (err) {
