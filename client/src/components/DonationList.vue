@@ -7,6 +7,7 @@
           <th>Amount</th>
           <th>Donor</th>
           <th>Mosque</th>
+          <th>Campaign</th>
         </tr>
       </thead>
       <tbody>
@@ -14,6 +15,7 @@
           <td>{{ donation.amount }}</td>
           <td>{{ donation.donor.name }}</td>
           <td>{{ donation.mosque.name }}</td>
+          <td>{{ donation.campaign?.name || "No Campaign" }}</td>
         </tr>
       </tbody>
     </table>
@@ -49,8 +51,13 @@ export default {
 </script>
 <style scoped>
 .donation-list {
-  max-width: 80vw;
+  max-width: 100%;
   margin: 0 auto;
-  /* padding: 20px; */
+}
+
+@media only screen and (min-width: 1024px) { /* Adjust the min-width value as needed for your definition of a "laptop screen" */
+ .donation-list {
+    max-width: 30vw;
+  }
 }
 </style>
