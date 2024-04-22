@@ -200,11 +200,13 @@ export default {
             this.user.loggedIn();
             this.$router.push("/");
           } else {
-            throw new Error(data.message || "Failed to update user");
+            alert(data.message);
+            this.user.loggedIn();
+            this.$router.push("/");
           }
         })
         .catch((err) => {
-          alert(`uh oh, theres a problem\n${err.status}: ${err.statusText}`);
+          alert(`uh oh, theres a problem\n${err.status}: ${err.message}`);
         });
     },
   },

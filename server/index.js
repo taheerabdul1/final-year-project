@@ -478,6 +478,12 @@ app.post("/api/users", async (req, res) => {
 app.put("/api/users/:id", async (req, res) => {
   if (req.user) {
     try {
+      // Check if the updated email already exists in the database
+      const emailExists = await User.findOne({ email: req.body.updatedUser.email });
+      if (emailExists && req.body.updatedUser.email!== req.user.email) {
+        return res.json({ message: "That email is already in use", success:false });
+      }
+
       const updatedUser = await User.findByIdAndUpdate(
         req.params.id,
         {
