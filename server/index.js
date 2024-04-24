@@ -254,7 +254,7 @@ app.post("/api/donations", async (req, res) => {
         $addToSet: { donors: donor }, // Add donor to the donors array if not already present
       });
 
-      res.json(newDonation);
+      res.status(201).json(newDonation);
     } catch (error) {
       console.error(error);
       res.status(500).send("Internal Server Error");
@@ -745,7 +745,7 @@ app.post("/api/register", async (req, res) => {
           res.json({ success: false });
         }
         passport.authenticate("local")(req, res, function () {
-          res.json({ success: true });
+          res.status(201).json({ success: true });
         });
       }
     );

@@ -9,7 +9,8 @@
   </p>
   <h3>View Announcements</h3>
   <p>Below are the announcements for the mosque you are administrating</p>
-  <div v-for="announcement in announcements" :key="announcement._id">
+  <div class="announcement-list">
+    <div v-for="announcement in announcements" :key="announcement._id">
     <div class="card mb-3">
       <div class="card-body">
         <h3 class="card-title">{{ announcement.title }}</h3>
@@ -87,6 +88,7 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
 </template>
 
@@ -202,3 +204,45 @@ export default {
   },
 };
 </script>
+<style scoped>
+.announcement-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card {
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 16px;
+}
+
+.card-body {
+  padding: 16px;
+}
+
+.card-title {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.card-text {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.status {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+button {
+  margin-right: 8px;
+  margin-bottom: 8px; /* Add this line to add bottom margin */
+}
+@media screen and (max-width: 768px) {
+  .card {
+    width: 99%;
+  }
+}
+</style>

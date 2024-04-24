@@ -5,7 +5,8 @@
       Below are the mosques registered with FundMosque.<br />
       Click More Info to find out more
     </p>
-    <table class="table">
+    <div class="mosques-table">
+      <table class="table">
       <thead>
         <tr>
           <th>Mosque Name</th>
@@ -30,6 +31,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
   <!-- Modal -->
   <div
@@ -153,5 +155,21 @@ export default {
   border: 1px solid #ccc;
   text-align: left;
   vertical-align: middle;
+}
+
+.mosques-table {
+  margin-left: 35%;
+  margin-right: 35%;
+}
+
+@media (max-width: 768px) {
+ .mosques-table {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+  }
+  table {
+    width: 100%;
+  }
 }
 </style>

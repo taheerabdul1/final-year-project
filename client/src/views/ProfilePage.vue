@@ -122,9 +122,19 @@
 </template>
 <style>
 .donation-table {
-  margin-right: 25%;
-  margin-left: 25%;
-  width: 50%;
+  margin-left: 35%;
+  margin-right: 35%;
+}
+
+@media (max-width: 768px) {
+ .donation-table {
+    margin-left: 0;
+    margin-right: 0;
+    width: 100%;
+  }
+  table {
+    width: 100%;
+  }
 }
 </style>
 

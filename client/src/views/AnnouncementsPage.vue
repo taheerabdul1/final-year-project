@@ -89,7 +89,11 @@ export default {
     };
   },
   created() {
-    fetch(`/api/announcements/${this.user.chosenMosqueId}`)
+    this.getAnnouncements();
+  },
+  methods: {
+    getAnnouncements(){
+      fetch(`/api/announcements/${this.user.chosenMosqueId}`)
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -105,8 +109,7 @@ export default {
       .catch((err) => {
         console.error(err);
       });
-  },
-  methods: {
+    },
     formatDate(date) {
       const options = {
         year: "numeric",
