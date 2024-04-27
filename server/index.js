@@ -9,7 +9,6 @@ import passportLocalMongoose from "passport-local-mongoose";
 import MongoStore from "connect-mongo";
 import PDFDocument from "pdfkit";
 import fs from "fs";
-import json2csv from "json2csv";
 dotenv.config();
 const app = express();
 const port = 3000;

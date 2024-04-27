@@ -110,7 +110,6 @@
             <button
               class="btn btn-primary"
               type="submit"
-              data-bs-dismiss="modal"
             >
               Update
             </button>
@@ -207,6 +206,7 @@ export default {
         .then((data) => {
           if (data.success) {
             alert("User updated successfully!");
+            document.querySelector(".btn-close").click();
             this.user.loggedIn();
             this.$router.push("/");
           } else {

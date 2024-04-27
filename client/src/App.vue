@@ -4,11 +4,13 @@
       <router-link @click="closeNavbar" to="/" class="navbar-brand"
         >FundMosque</router-link
       >
-      <div class="navbar-nav ms-auto">
-        <a v-if="user.isLoggedIn" @click="user.logout" class="nav-item nav-link"
-          >Logout</a
-        >
-      </div>
+      <router-link
+        v-if="user.isLoggedIn"
+        @click="logout"
+        class="nav-item nav-link"
+        to="/logout"
+        >Logout</router-link
+      >
       <button
         class="navbar-toggler"
         type="button"

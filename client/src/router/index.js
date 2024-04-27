@@ -13,6 +13,7 @@ import AddCampaign from "../views/AddCampaign.vue";
 import { useUserStore } from "../store/index";
 import AnnouncementsPage from "../views/AnnouncementsPage.vue";
 import AddAnnouncement from "../views/AddAnnouncement.vue";
+import LogOutPage from "../views/LogOutPage.vue";
 
 const routes = [
   {
@@ -154,6 +155,11 @@ const routes = [
     path: "/denied",
     name: "denied",
     component: AccessDenied,
+  },
+  {
+    path: "/logout",
+    name: "logout",
+    component: LogOutPage,
   },
   {
     path: "/:catchAll(.*)",
