@@ -84,10 +84,6 @@ If you encounter any issues or have questions, feel free to open an issue in thi
 
 * 0.1 - Initial Release
 
-## Acknowledgments
-
-(Include any acknowledgments or credits here)
-
 ## Images
 
 ![Homepage when user is not logged in](/docs/homepage.png)
