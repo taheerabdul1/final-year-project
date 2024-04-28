@@ -97,3 +97,4 @@ If you encounter any issues or have questions, feel free to open an issue in thi
 ![Announcements](/docs/announcement.png)
 ![Admin dashboard page](/docs/admindashboard.png)
 ![Admin dashboard page](/docs/admindashboard2.png)
+![Logout page](/docs/logout.png)
