@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
@@ -9,7 +10,6 @@ import passportLocalMongoose from "passport-local-mongoose";
 import MongoStore from "connect-mongo";
 import PDFDocument from "pdfkit";
 import fs from "fs";
-dotenv.config();
 const app = express();
 const port = 3000;
 
