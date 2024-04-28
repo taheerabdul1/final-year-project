@@ -1,68 +1,103 @@
-# Final Year Project
+# FundMosque: Mosque Donation Management System (Final Year Project)
 
-This repository contains the source code and documentation for my final year project.
+Welcome to the repository for FundMosque, a donation management system designed to streamline the donation process for mosques. This project serves as my final year project.
 
-## Project Description
+## Features
 
-[FundMosque - Mosque Donation Management System]
+* Easy donation collection and tracking
+* Secure user management (including administrator accounts)
+* Campaign Management
+* Announcements
+* Administrator Dashboard
+* Report Generation
 
 ## Getting Started
 
-### Dependencies
+**Prerequisites:**
 
-[See package.json for a list of all dependencies needed for this project]
+* Node.js and npm installed on your system
+* MongoDB database (local or hosted)
 
-### Installing
+**Installation:**
 
-After cloning or forking the repository, follow the steps below to set up the program
+1. **Clone or fork** this repository.
+2. **Navigate** to the project root directory.
+3. **Set up environment variables:**
+   - Create a `.env` file in the `/server` directory.
+   - Add the following lines, replacing the placeholders with your actual values:
 
-#### Installing the backend
+     ```
+     URI=mongodb://localhost:27017   # Replace with your MongoDB connection string
+     PASSCODE=your_secret_passcode   # Replace with a secure passcode for admin users
+     ```
 
-Open a terminal
+4. **Install dependencies:**
+   - Open a terminal and navigate to the `/server` directory:
 
-Navigate to the root directory of the project
+     ```bash
+     cd server
+     ```
 
-cd server
+   - Install backend dependencies:
 
-npm install
+     ```bash
+     npm install
+     ```
 
-npm start
+   - Open a new terminal and navigate to the `/client` directory:
 
-#### Installing the frontend
+     ```bash
+     cd ../client
+     ```
 
-Open a new terminal
+   - Install frontend dependencies:
 
-Navigate to the root directory of the project
+     ```bash
+     npm install
+     ```
 
-cd client
+5. **Start the application:**
 
-npm install
+   - Open a terminal and navigate to the `/server` directory:
 
-npm run serve
+     ```bash
+     cd server
+     ```
 
-### Executing program
+   - Start the server:
 
-Open a new terminal
+     ```bash
+     npm start
+     ```
 
-Navigate to the root directory of the project
-
-cd server
-
-npm start
+This will start the FundMosque application.
 
 ## Help
 
-If you encounter any problems or have any questions, please open an issue in this repository.
+If you encounter any issues or have questions, feel free to open an issue in this repository.
 
 ## Authors
 
-Abdul Taheer
+* Abdul Taheer
 
 ## Version History
 
-0.1
-Initial Release
+* 0.1 - Initial Release
 
 ## Acknowledgments
 
-[List any acknowledgments, credits, or thanks.]
+(Include any acknowledgments or credits here)
+
+## Images
+
+![Homepage when user is not logged in](/docs/homepage.png)
+![Register page](/docs/register.png)
+![Login page](/docs/login.png)
+![Homepage when user is logged in](/docs/homepageloggedin.png)
+![Make a donation page](/docs/makedonation.png)
+![View mosques page](/docs/mosquespage.png)
+![Profile page](/docs/profilepage.png)
+![Campaigns page](/docs/campaigns.png)
+![Announcements](/docs/announcement.png)
+![Admin dashboard page](/docs/admindashboard.png)
+![Admin dashboard page](/docs/admindashboard2.png)
