@@ -229,7 +229,7 @@ app.get("/api/donations", async (req, res) => {
       const donations = await Donation.find()
         .populate("donor", "name")
         .populate("mosque", "name")
-        .populate("campaign","name");
+        .populate("campaign", "name");
       res.json(donations);
     } catch (error) {
       console.error(error);
@@ -478,9 +478,14 @@ app.put("/api/users/:id", async (req, res) => {
   if (req.user) {
     try {
       // Check if the updated email already exists in the database
-      const emailExists = await User.findOne({ email: req.body.updatedUser.email });
-      if (emailExists && req.body.updatedUser.email!== req.user.email) {
-        return res.json({ message: "That email is already in use", success:false });
+      const emailExists = await User.findOne({
+        email: req.body.updatedUser.email,
+      });
+      if (emailExists && req.body.updatedUser.email !== req.user.email) {
+        return res.json({
+          message: "That email is already in use",
+          success: false,
+        });
       }
 
       const updatedUser = await User.findByIdAndUpdate(
@@ -818,9 +823,17 @@ app.get("/api/loggedIn", async (req, res) => {
 app.get("/api/logout", (req, res) => {
   req.logout((err) => {
     if (err) {
-      console.log(err);
+      console.error("Error destroying session:", err);
+      return res.status(500).json({ success: false });
     } else {
-      res.json({ success: true });
+      req.session.destroy((err) => {
+        if (err) {
+          console.error("Error destroying session:", err);
+          return res.status(500).json({ success: false });
+        } else {
+          res.json({ success: true, message: "Logged out." });
+        }
+      });
     }
   });
 });
