@@ -29,7 +29,7 @@
         <tr v-for="donation in donations" :key="donation._id">
           <td>{{ donation.amount }}</td>
           <td>{{ donation.mosque.name }}</td>
-          <td>{{ donation.campaign?.name || null }}</td>
+          <td>{{ donation.campaign?.name || "No Campaign" }}</td>
         </tr>
       </tbody>
     </table>
