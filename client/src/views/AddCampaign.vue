@@ -74,7 +74,7 @@ export default {
         .then((res) => res.json())
         .then((data) => {
           if (data.success) {
-            alert("Announcement added successfully.");
+            alert("Campaign added successfully.");
             this.$router.push("/campaigns");
           }
         })
