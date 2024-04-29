@@ -77,6 +77,10 @@ router.get("/donations/pdf/:mosqueId", async (req, res) => {
 
 router.get("/campaigns/csv/:campaignId", async (req, res) => {
   try {
+    const campaign = await Campaign.findOne({ _id: req.params.campaignId  });
+    if(!campaign){
+      return res.status(404).json({ error: 'Campaign Not Found'})
+    }
     const donations = await Donation.find({ campaign: req.params.campaignId })
       .populate("donor", "name")
       .populate("campaign", "name")
@@ -94,13 +98,12 @@ router.get("/campaigns/csv/:campaignId", async (req, res) => {
     res.send(csvData);
   } catch (error) {
     console.log(error);
-    return res.status(422).send({ message: err.message });
+    return res.status(422).send({ message: "error" });
   }
 });
 
-router.get("/api/reports/campaigns/pdf/:campaignId", async (req, res) => {
+router.get("/campaigns/pdf/:campaignId", async (req, res) => {
   try {
-    const campaign = await Campaign.findOne({ _id: req.params.campaignId });
     const donations = await Donation.find({ campaign: req.params.campaignId })
       .populate("donor", "name")
       .populate("campaign", "name")
