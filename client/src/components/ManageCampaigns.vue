@@ -185,9 +185,9 @@ export default {
     formatDate(date) {
       return new Date(date).toLocaleDateString();
     },
-    // refresh the page to retrieve fresh data
+    // retrieve fresh data
     refreshDonations() {
-      window.location.reload();
+      this.retrieveCampaigns();
     },
     // update the announcement
     update(formData) {
