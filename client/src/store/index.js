@@ -19,6 +19,7 @@ export const useUserStore = defineStore("user", {
     return storedUserState ? JSON.parse(storedUserState) : initialUserState;
   },
   actions: {
+    // check if the user is logged in or not
     async loggedIn() {
       try {
         const response = await fetch("/api/loggedIn", {
@@ -44,6 +45,7 @@ export const useUserStore = defineStore("user", {
         console.log(e);
       }
     },
+    // request the server to log the user out
     async logout() {
       const response = await fetch("/api/logout", {
         method: "GET",
@@ -63,6 +65,7 @@ export const useUserStore = defineStore("user", {
         localStorage.clear();
       }
     },
+    // request to log the user in
     async login() {
       try {
         const response = await fetch("/api/login", {

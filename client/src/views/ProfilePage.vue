@@ -107,12 +107,7 @@
                 </option>
               </select>
             </div>
-            <button
-              class="btn btn-primary"
-              type="submit"
-            >
-              Update
-            </button>
+            <button class="btn btn-primary" type="submit">Update</button>
           </form>
         </div>
       </div>
@@ -126,7 +121,7 @@
 }
 
 @media (max-width: 768px) {
- .donation-table {
+  .donation-table {
     margin-left: 0;
     margin-right: 0;
     width: 100%;
@@ -155,6 +150,7 @@ export default {
     };
   },
   created() {
+    // retrieve a list of all the mosques
     fetch("/api/mosques")
       .then((response) => {
         if (response.ok) {
@@ -169,6 +165,7 @@ export default {
       .catch((error) => {
         console.error(error);
       });
+    // retrieve a list of the users donations
     fetch(`/api/userDonations/${this.user._id}`)
       .then((response) => {
         if (response.ok) {
@@ -180,6 +177,7 @@ export default {
       });
   },
   methods: {
+    // request the server to update the credentials, then redirect to HomePage.vue
     async update(id) {
       let updatedUser = {
         _id: this.user._id,

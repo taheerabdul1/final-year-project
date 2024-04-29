@@ -72,7 +72,6 @@
 .users-table {
   width: 80vw;
   margin: 0 auto;
-  /* padding: 20px; */
 }
 
 .button-container {
@@ -80,7 +79,7 @@
 }
 
 .button-container button {
-  margin-right: 10px; /* Add this line to add space between the buttons */
+  margin-right: 10px; 
 }
 </style>
 <script>
@@ -107,6 +106,7 @@ export default {
     };
   },
   created() {
+    // retrieve the list of users registered to this user's chosen mosque
     fetch(`/api/users/${this.user.chosenMosqueId}`)
       .then((response) => {
         if (response.ok) {
@@ -121,6 +121,7 @@ export default {
       .catch((error) => {
         console.error(error);
       });
+    //  retrieve information about the donation for the user's chosen mosque
     fetch(`/api/mosqueAllDonations/${this.user.chosenMosqueId}`)
       .then((response) => {
         if (response.ok) {
@@ -138,6 +139,7 @@ export default {
       });
   },
   methods: {
+    // make a request to generate a CSV file of the donations for the user's chosen mosque
     async generateDonationsCSV() {
       await fetch(`/api/reports/donations/csv/${this.user.chosenMosqueId}`)
         .then((response) => response.blob())
@@ -150,6 +152,7 @@ export default {
           window.URL.revokeObjectURL(url);
         });
     },
+    // make a request to generate a PDF file of the donations for the user's chosen mosque
     async generateDonationsPDF() {
       await fetch(`/api/reports/donations/pdf/${this.user.chosenMosqueId}`)
         .then((response) => response.blob())

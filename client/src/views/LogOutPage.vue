@@ -1,6 +1,8 @@
 <template>
   <h1>Logged out successfully!</h1>
-  <button class="btn btn-primary" @click="redirectHome()">Click here to go home</button>
+  <button class="btn btn-primary" @click="redirectHome()">
+    Click here to go home
+  </button>
 </template>
 <script>
 import { useUserStore } from "../store/index";
@@ -12,18 +14,18 @@ export default {
   },
   setup() {
     function logout() {
-      this.user.logout()
+      this.user.logout();
     }
-    return {logout}
+    return { logout };
   },
   mounted() {
     this.logout();
   },
   methods: {
-    redirectHome(){
+    redirectHome() {
       this.$router.push("/");
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped lang="scss">

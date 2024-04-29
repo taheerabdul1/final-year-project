@@ -79,7 +79,6 @@
               <button
                 class="btn btn-primary"
                 type="submit"
-                data-bs-dismiss="modal"
               >
                 Update
               </button>
@@ -115,6 +114,7 @@ export default {
     this.getAnnouncements();
   },
   methods: {
+    // retrieve the announcements for the user's chosen mosque
     async getAnnouncements() {
       await fetch(`/api/announcements/${this.user.chosenMosqueId}`)
         .then((response) => {
@@ -133,9 +133,11 @@ export default {
           console.error(err);
         });
     },
+    // redirect user to AddAnnouncement.vue
     addAnnouncement() {
       this.$router.push("/addAnnouncement");
     },
+    // handle submission of edit announcement form
     async updateAnnouncement(formData) {
       await fetch(`/api/announcements/${formData._id}`, {
         method: "PUT",
@@ -155,6 +157,7 @@ export default {
           if (data.success) {
             alert("Announcement updated successfully!");
             this.getAnnouncements();
+            document.querySelector(".btn-close").click();
           } else {
             throw new Error(data.message || "Failed to update campaign");
           }
@@ -163,6 +166,7 @@ export default {
           alert(`uh oh, theres a problem\n${err.status}: ${err.statusText}`);
         });
     },
+    // delete an announcement from the database and refresh page
     async deleteAnnouncement(announcement) {
       await fetch(`/api/announcements/${announcement._id}`, {
         method: "DELETE",
@@ -188,9 +192,11 @@ export default {
           console.log(error);
         });
     },
+    // open modal for adding new announcement
     showUpdateModal(announcement) {
       this.formData = announcement;
     },
+    // format the date to a readable format
     formatDate(date) {
       const options = {
         year: "numeric",
@@ -205,12 +211,14 @@ export default {
 };
 </script>
 <style scoped>
+/* align the announcements vertically in the centre of the page */
 .announcement-list {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+/* the following selectors style each card  */
 .card {
   width: 100%;
   max-width: 600px;
@@ -238,8 +246,10 @@ export default {
 
 button {
   margin-right: 8px;
-  margin-bottom: 8px; /* Add this line to add bottom margin */
+  margin-bottom: 8px;
 }
+
+/* make the card as wide as the screen on smaller screens */
 @media screen and (max-width: 768px) {
   .card {
     width: 99%;

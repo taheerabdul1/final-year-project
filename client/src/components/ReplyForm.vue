@@ -31,7 +31,7 @@ export default {
         })
         .then((data) => {
           if (data.success) {
-            window.location.reload();
+            this.$emit('replySubmitted')
             this.replyContent = "";
           }
         });

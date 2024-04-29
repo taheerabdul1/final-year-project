@@ -53,7 +53,7 @@
 
 <script>
 import router from "../router/index";
-import {useUserStore} from "../store/index";
+import { useUserStore } from "../store/index";
 
 export default {
   data() {
@@ -96,7 +96,7 @@ export default {
         adminPasscode: this.adminPasscode,
         chosenMosqueId: this.chosenMosqueId,
       };
-      console.log(newuser)
+      console.log(newuser);
       try {
         const response = await fetch("/api/register", {
           method: "POST",

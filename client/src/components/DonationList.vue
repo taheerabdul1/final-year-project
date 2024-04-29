@@ -30,6 +30,7 @@ export default {
     };
   },
   created() {
+    // retrieve all the donations and show only the three most recent donations
     fetch(`/api/donations`)
       .then((response) => {
         if (response.ok) {
@@ -50,12 +51,14 @@ export default {
 };
 </script>
 <style scoped>
+/* make the table as wide as the screen */
 .donation-list {
   max-width: 100%;
   margin: 0 auto;
 }
 
-@media only screen and (min-width: 1024px) { /* Adjust the min-width value as needed for your definition of a "laptop screen" */
+/* make the table smaller on larger screens */
+@media only screen and (min-width: 1024px) {
  .donation-list {
     max-width: 30vw;
   }

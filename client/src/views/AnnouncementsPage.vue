@@ -18,7 +18,7 @@
             :announcementId="announcement._id"
           />
           <h4>Reply to this announcement here:</h4>
-          <ReplyForm :announcementId="announcement._id" />
+          <ReplyForm :announcementId="announcement._id" v-on:replySubmitted="handleReplySubmitted" />
         </div>
       </div>
     </div>
@@ -120,6 +120,9 @@ export default {
       };
       return new Date(date).toLocaleString("en-US", options);
     },
+    handleReplySubmitted(){
+      this.getAnnouncements();
+    }
   },
 };
 </script>

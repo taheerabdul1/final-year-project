@@ -17,6 +17,8 @@ Welcome to the repository for FundMosque, a donation management system designed 
 
 * Node.js and npm installed on your system
 * MongoDB database (local or hosted)
+* You can sign up to MongoDB Atlas (a free hosted MongoDB database platform) [here](https://cloud.mongodb.com)
+* Alternatively, you can download MongoDB Compass [here](https://www.mongodb.com/try/download/compass)
 
 **Installation:**
 

@@ -7,30 +7,30 @@
     </p>
     <div class="mosques-table">
       <table class="table">
-      <thead>
-        <tr>
-          <th>Mosque Name</th>
-          <th>Mosque Address</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="mosque in mosques" :key="mosque._id">
-          <td>{{ mosque.name }}</td>
-          <td>{{ mosque.address }}</td>
-          <td>
-            <button
-              class="btn btn-primary"
-              data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
-              v-on:click="mosqueMoreInfo(mosque._id, mosque.name)"
-            >
-              More Info
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+        <thead>
+          <tr>
+            <th>Mosque Name</th>
+            <th>Mosque Address</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="mosque in mosques" :key="mosque._id">
+            <td>{{ mosque.name }}</td>
+            <td>{{ mosque.address }}</td>
+            <td>
+              <button
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+                v-on:click="mosqueMoreInfo(mosque._id, mosque.name)"
+              >
+                More Info
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
   <!-- Modal -->
@@ -44,7 +44,9 @@
     <div class="modal-dialog modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">More information about: </h1>
+          <h1 class="modal-title fs-5" id="exampleModalLabel">
+            More information about:
+          </h1>
           <button
             type="button"
             class="btn-close"
@@ -54,7 +56,10 @@
         </div>
         <div class="modal-body">
           <h2>{{ this.selectedMosque }}</h2>
-          <p>The total donations since joining FundMosque for {{ selectedMosque }} is: £{{ totalMosqueDonations }}!</p>
+          <p>
+            The total donations since joining FundMosque for
+            {{ selectedMosque }} is: £{{ totalMosqueDonations }}!
+          </p>
           <table class="table">
             <thead>
               <tr>
@@ -98,6 +103,7 @@ export default {
     };
   },
   mounted() {
+    // retrieve a list of all the mosques in the system
     fetch(`/api/mosques/`)
       .then((response) => {
         if (response.ok) {
@@ -114,6 +120,7 @@ export default {
       });
   },
   methods: {
+    // get donation details for a specific mosque when its button is clicked
     mosqueMoreInfo(id, name) {
       this.selectedMosque = name;
       fetch(`/api/mosqueAllDonations/${id}`)
@@ -163,7 +170,7 @@ export default {
 }
 
 @media (max-width: 768px) {
- .mosques-table {
+  .mosques-table {
     margin-left: 0;
     margin-right: 0;
     width: 100%;

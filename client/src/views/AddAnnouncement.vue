@@ -43,6 +43,7 @@ export default {
     };
   },
   methods: {
+    // create a new announcement, then send the user to AnnouncementPage.vue
     addAnnouncement() {
       fetch(`/api/announcements`, {
         method: "POST",

@@ -31,6 +31,7 @@
           class="btn btn-warning"
           data-bs-toggle="modal"
           data-bs-target="#updateCampaignModal"
+          @click="openModal(campaign)"
         >
           Update
         </button>
@@ -66,12 +67,12 @@
               ></button>
             </div>
             <div class="modal-body">
-              <form @submit.prevent="update(campaign)" class="form">
+              <form @submit.prevent="update(formData)" class="form">
                 <div class="mb-3">
                   <label for="name" class="form-label">Name</label>
                   <input
                     class="form-control"
-                    v-model="campaign.name"
+                    v-model="formData.name"
                     type="text"
                     required
                   />
@@ -82,7 +83,7 @@
                   >
                   <textarea
                     class="form-control"
-                    v-model="campaign.description"
+                    v-model="formData.description"
                     type="text"
                     required
                   ></textarea>
@@ -91,7 +92,7 @@
                   <label for="goal" class="form-label">Goal</label>
                   <input
                     class="form-control"
-                    v-model="campaign.goal"
+                    v-model="formData.goal"
                     type="number"
                     required
                   />
@@ -100,7 +101,7 @@
                   <label for="startDate" class="form-label">Start Date</label>
                   <input
                     class="form-control"
-                    v-model="campaign.startDate"
+                    v-model="formData.startDate"
                     type="date"
                     required
                   />
@@ -109,7 +110,7 @@
                   <label for="endDate" class="form-label">End Date</label>
                   <input
                     class="form-control"
-                    v-model="campaign.endDate"
+                    v-model="formData.endDate"
                     type="date"
                     required
                   />
@@ -117,7 +118,6 @@
                 <button
                   class="btn btn-primary"
                   type="submit"
-                  data-bs-dismiss="modal"
                 >
                   Update
                 </button>
@@ -142,10 +142,25 @@ export default {
   data() {
     return {
       campaigns: [],
+      formData: {
+        _id: "",
+        name: "",
+        description: "",
+        mosque: "",
+        goal: 0,
+        startDate: "",
+        endDate: "",
+      }
     };
   },
   created() {
-    fetch(`/api/campaigns/${this.user.chosenMosqueId}`)
+    // fetch the list of all campaigns on page load
+    this.retrieveCampaigns();
+  },
+  methods: {
+    // retrieve all the campaigns for the user's chosen mosque, then grab the dates and select only the first 10 characters
+    retrieveCampaigns() {
+      fetch(`/api/campaigns/${this.user.chosenMosqueId}`)
       .then((response) => {
         if (response.ok) {
           return response.json();
@@ -161,31 +176,34 @@ export default {
         });
       })
       .catch((err) => console.log(err));
-  },
-  methods: {
+    },
+    // redirect the user to AddCampaign.vue
     addCampaign() {
       this.$router.push("/addCampaign");
     },
+    // format the date to a readable format
     formatDate(date) {
       return new Date(date).toLocaleDateString();
     },
+    // refresh the page to retrieve fresh data
     refreshDonations() {
       window.location.reload();
     },
-    update(campaign) {
-      fetch(`/api/campaigns/${campaign._id}`, {
+    // update the announcement
+    update(formData) {
+      fetch(`/api/campaigns/${formData._id}`, {
         method: "PUT",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: campaign.name,
-          description: campaign.description,
-          mosque: campaign.mosque,
-          goal: campaign.goal,
-          startDate: campaign.startDate,
-          endDate: campaign.endDate,
+          name: formData.name,
+          description: formData.description,
+          mosque: formData.mosque,
+          goal: formData.goal,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
         }),
       })
         .then((response) => {
@@ -202,7 +220,8 @@ export default {
               campaign.startDate = campaign.startDate.substring(0, 10);
               campaign.endDate = campaign.endDate.substring(0, 10);
             });
-            window.location.reload();
+            this.retrieveCampaigns();
+            document.querySelector(".btn-close").click();
           } else {
             throw new Error(data.message || "Failed to update campaign");
           }
@@ -211,6 +230,7 @@ export default {
           alert(`uh oh, theres a problem\n${err.status}: ${err.statusText}`);
         });
     },
+    // delete a specific campaign from the database
     deleteCampaign(campaign) {
       console.log(JSON.stringify(campaign));
       fetch(`/api/campaigns/${campaign._id}`, {
@@ -227,13 +247,14 @@ export default {
             alert(data.error);
           } else {
             alert(data.message);
-            window.location.reload();
+            this.retrieveCampaigns();
           }
         })
         .catch((error) => {
           alert(error.toString());
         });
     },
+    // make a request to create a CSV report of the campaign
     async generateCampaignsCSV(campaign) {
       await fetch(`/api/reports/campaigns/csv/${campaign._id}`)
         .then((response) => response.blob())
@@ -246,6 +267,7 @@ export default {
           window.URL.revokeObjectURL(url);
         });
     },
+    // make a request to create a PDF report of the campaign
     async generateCampaignsPDF(campaign) {
       await fetch(`/api/reports/campaigns/pdf/${campaign._id}`)
         .then((response) => response.blob())
@@ -258,16 +280,21 @@ export default {
           window.URL.revokeObjectURL(url);
         });
     },
+    openModal(campaign){
+      this.formData = campaign;
+    }
   },
 };
 </script>
 <style scoped>
+/* align the campaigns vertically in the centre of the page */
 .campaign-list {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
+/* the following selectors style each card */
 .card {
   width: 100%;
   max-width: 600px;
@@ -295,8 +322,10 @@ export default {
 
 button {
   margin-right: 8px;
-  margin-bottom: 8px; /* Add this line to add bottom margin */
+  margin-bottom: 8px; 
 }
+
+/* make the card as wide as the screen on smaller screens */
 @media screen and (max-width: 768px) {
   .card {
     width: 99%;

@@ -50,6 +50,7 @@ export default {
     };
   },
   methods: {
+    // create a new campaign, then redirect the user to CampaignsPage.vue
     addCampaign() {
       let formData = {
         name: this.name,
