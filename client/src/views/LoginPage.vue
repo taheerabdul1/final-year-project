@@ -24,6 +24,7 @@
       </div>
       <button class="btn btn-primary" type="submit">Login</button>
     </form>
+    <a class="btn btn-secondary" href="/api/google">Click here to sign in with Google</a>
   </div>
 </template>
 
