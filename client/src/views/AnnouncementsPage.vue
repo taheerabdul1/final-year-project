@@ -1,28 +1,38 @@
 <template>
-  <h1>Announcements</h1>
-  <h2 v-if="announcements.length == 0">Wow... so empty....</h2>
-  <div v-for="announcement in announcements" :key="announcement._id">
-    <div class="announcements-list">
-      <div class="card mb-3">
-      <div class="card-body">
-        <h3 class="card-title">{{ announcement.title }}</h3>
-        <p class="card-text">
-          {{ formatDate(announcement.createdAt) }} by
-          {{ announcement.createdBy.name }}
-        </p>
-        <p class="card-text">{{ announcement.content }}</p>
-        <h5>Replies</h5>
-        <div class="mt-3">
-          <ReplyList
-            :replies="announcement.replies"
-            :announcementId="announcement._id"
-          />
-          <h4>Reply to this announcement here:</h4>
-          <ReplyForm :announcementId="announcement._id" v-on:replySubmitted="handleReplySubmitted" />
+  <div v-if="user.chosenMosqueName != null">
+    <h1>Announcements</h1>
+    <h2 v-if="announcements.length == 0">Wow... so empty....</h2>
+    <div v-for="announcement in announcements" :key="announcement._id">
+      <div class="announcements-list">
+        <div class="card mb-3">
+          <div class="card-body">
+            <h3 class="card-title">{{ announcement.title }}</h3>
+            <p class="card-text">
+              {{ formatDate(announcement.createdAt) }} by
+              {{ announcement.createdBy.name }}
+            </p>
+            <p class="card-text">{{ announcement.content }}</p>
+            <h5>Replies</h5>
+            <div class="mt-3">
+              <ReplyList
+                :replies="announcement.replies"
+                :announcementId="announcement._id"
+              />
+              <h4>Reply to this announcement here:</h4>
+              <ReplyForm
+                :announcementId="announcement._id"
+                v-on:replySubmitted="handleReplySubmitted"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
-    </div>
+  </div>
+  <div v-else>
+    <h1>Uh Oh!</h1>
+    <p>You don't have a chosen mosque!</p>
+    <p>Go and select a chosen mosque from the profile page.</p>
   </div>
 </template>
 <style scoped lang="scss">
@@ -92,23 +102,23 @@ export default {
     this.getAnnouncements();
   },
   methods: {
-    getAnnouncements(){
+    getAnnouncements() {
       fetch(`/api/announcements/${this.user.chosenMosqueId}`)
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          throw new Error(response.status);
-        }
-      })
-      .then((data) => {
-        if (data.success) {
-          this.announcements = data.announcements;
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+        .then((response) => {
+          if (response.ok) {
+            return response.json();
+          } else {
+            throw new Error(response.status);
+          }
+        })
+        .then((data) => {
+          if (data.success) {
+            this.announcements = data.announcements;
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
     formatDate(date) {
       const options = {
@@ -120,9 +130,9 @@ export default {
       };
       return new Date(date).toLocaleString("en-US", options);
     },
-    handleReplySubmitted(){
+    handleReplySubmitted() {
       this.getAnnouncements();
-    }
+    },
   },
 };
 </script>

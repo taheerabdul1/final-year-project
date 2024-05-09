@@ -1,20 +1,27 @@
 <template>
-  <h1>View Campaigns</h1>
-  <h2 v-if="campaignList.length == 0">Wow... so empty...</h2>
-  <div class="campaign-list">
-    <div class="card" v-for="campaign in campaignList" :key="campaign._id">
-      <div class="card-body">
-        <h5 class="card-title">{{ campaign.name }}</h5>
-        <p class="card-text">{{ campaign.description }}</p>
-        <p class="card-text status">
-          Goal: {{ campaign.goal }} <br />
-          Raised: {{ campaign.raisedAmount }} <br />
-          Start Date: {{ formatDate(campaign.startDate) }} <br />
-          End Date: {{ formatDate(campaign.endDate) }}
-        </p>
-        <button @click="redirect()" class="btn btn-primary">Donate</button>
+  <div v-if="user.chosenMosqueName != null">
+    <h1>View Campaigns</h1>
+    <h2 v-if="campaignList.length == 0">Wow... so empty...</h2>
+    <div class="campaign-list">
+      <div class="card" v-for="campaign in campaignList" :key="campaign._id">
+        <div class="card-body">
+          <h5 class="card-title">{{ campaign.name }}</h5>
+          <p class="card-text">{{ campaign.description }}</p>
+          <p class="card-text status">
+            Goal: {{ campaign.goal }} <br />
+            Raised: {{ campaign.raisedAmount }} <br />
+            Start Date: {{ formatDate(campaign.startDate) }} <br />
+            End Date: {{ formatDate(campaign.endDate) }}
+          </p>
+          <button @click="redirect()" class="btn btn-primary">Donate</button>
+        </div>
       </div>
     </div>
+  </div>
+  <div v-else>
+    <h1>Uh Oh!</h1>
+    <p>You don't have a chosen mosque!</p>
+    <p>Go and select a chosen mosque from the profile page.</p>
   </div>
 </template>
 
@@ -46,7 +53,7 @@ export default {
       );
   },
   methods: {
-    redirect(){
+    redirect() {
       this.$router.push("/makeDonation");
     },
     // format the date in a readable format

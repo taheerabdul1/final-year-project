@@ -1,43 +1,50 @@
 <template>
-  <h1>Donate to {{ user.chosenMosqueName }}</h1>
-  <p>
-    Fill in the form below to make a donation <br />
-    We thank you for your generosity! <br />To change the mosque you wish to
-    donate to, edit your profle.
-  </p>
-  <form @submit.prevent="submitDonation">
-    <div class="mb-3">
-      <label for="amount">Amount</label>
-      <input
-        type="number"
-        class="form-control"
-        id="amount"
-        aria-describedby="amount"
-        v-model="amount"
-        placeholder="Enter Amount in £ here"
-        required
-      />
-    </div>
-    <div class="mb-3">
-      <label for="campaign">Campaign</label>
-      <select
-        class="form-select"
-        id="campaign"
-        name="campaign"
-        v-model="selectedCampaign"
-      >
-        <option value="" selected>None</option>
-        <option
-          v-for="campaign of campaigns"
-          :key="campaign._id"
-          :value="campaign._id"
+  <div v-if="user.chosenMosqueName != null">
+    <h1>Donate to {{ user.chosenMosqueName }}</h1>
+    <p>
+      Fill in the form below to make a donation <br />
+      We thank you for your generosity! <br />To change the mosque you wish to
+      donate to, edit your profle.
+    </p>
+    <form @submit.prevent="submitDonation">
+      <div class="mb-3">
+        <label for="amount">Amount</label>
+        <input
+          type="number"
+          class="form-control"
+          id="amount"
+          aria-describedby="amount"
+          v-model="amount"
+          placeholder="Enter Amount in £ here"
+          required
+        />
+      </div>
+      <div class="mb-3">
+        <label for="campaign">Campaign</label>
+        <select
+          class="form-select"
+          id="campaign"
+          name="campaign"
+          v-model="selectedCampaign"
         >
-          {{ campaign.name }}
-        </option>
-      </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
+          <option value="" selected>None</option>
+          <option
+            v-for="campaign of campaigns"
+            :key="campaign._id"
+            :value="campaign._id"
+          >
+            {{ campaign.name }}
+          </option>
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+  <div v-else>
+    <h1>Uh Oh!</h1>
+    <p>You don't have a chosen mosque!</p>
+    <p>Go and select a chosen mosque from the profile page.</p>
+  </div>
 </template>
 <script>
 import router from "../router/index";
