@@ -7,18 +7,20 @@ import cors from "cors";
 import session from "express-session";
 import passport from "passport";
 import MongoStore from "connect-mongo";
+import passportGoogle from "passport-google-oauth20";
+const GoogleStrategy = passportGoogle.Strategy;
 
-import Mosque from './models/mosque.model.js';
-import User from './models/user.model.js';
-import Donation from './models/donation.model.js';
+import Mosque from "./models/mosque.model.js";
+import User from "./models/user.model.js";
+import Donation from "./models/donation.model.js";
 
-import mosqueRoutes from './routes/mosqueRoutes.js';
-import userRoutes from './routes/userRoutes.js';
-import donationRoutes from './routes/donationRoutes.js';
-import campaignRoutes from './routes/campaignRoutes.js';
-import announcementRoutes from './routes/announcementRoutes.js';
-import reportsRoutes from  './routes/reportsRoutes.js';
-import replyRoutes from './routes/replyRoutes.js';
+import mosqueRoutes from "./routes/mosqueRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+import donationRoutes from "./routes/donationRoutes.js";
+import campaignRoutes from "./routes/campaignRoutes.js";
+import announcementRoutes from "./routes/announcementRoutes.js";
+import reportsRoutes from "./routes/reportsRoutes.js";
+import replyRoutes from "./routes/replyRoutes.js";
 
 const app = express();
 const port = 3000;
@@ -63,19 +65,44 @@ mongoose.connect(process.env.URI).catch((err) => console.log(err));
 passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "/api/google/redirect",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      const existingUser = await User.findOne({ googleId: profile.id });
+      if (existingUser) return done(null, existingUser);
+      else {
+        let user = await User.create({
+          username: profile.emails?.[0].value,
+          name: profile.displayName,
+          email: profile.emails?.[0].value,
+          chosenMosqueId: null,
+          googleId: profile.id,
+        });
+        if (user) {
+          done(null, user);
+        }
+      }
+    }
+  )
+);
 
 //connect express app
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
 });
 
-app.use('/api/mosques', mosqueRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/donations', donationRoutes);
-app.use('/api/campaigns', campaignRoutes);
-app.use('/api/announcements', announcementRoutes);
-app.use('/api/reports', reportsRoutes)
-app.use('/api/replies', replyRoutes);
+app.use("/api/mosques", mosqueRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/donations", donationRoutes);
+app.use("/api/campaigns", campaignRoutes);
+app.use("/api/announcements", announcementRoutes);
+app.use("/api/reports", reportsRoutes);
+app.use("/api/replies", replyRoutes);
 
 app.get("/api/userDonations/:userId", async (req, res) => {
   if (req.user) {
@@ -115,12 +142,12 @@ app.get("/api/mosqueAllDonations/:mosqueId", async (req, res) => {
 });
 
 app.post("/api/register", async (req, res) => {
-  const adminPasscode = process.env.PASSCODE; 
-  const enteredPasscode = req.body.adminPasscode; 
-  let isAdmin = false; 
+  const adminPasscode = process.env.PASSCODE;
+  const enteredPasscode = req.body.adminPasscode;
+  let isAdmin = false;
 
   if (enteredPasscode && enteredPasscode === adminPasscode) {
-    isAdmin = true; 
+    isAdmin = true;
   }
   try {
     User.register(
@@ -181,7 +208,7 @@ app.get("/api/profile", async (req, res) => {
       email: req.user.email,
       isAdmin: req.user.isAdmin,
       chosenMosqueId: req.user.chosenMosqueId,
-      chosenMosqueName: chosenMosqueName.name,
+      chosenMosqueName: chosenMosqueName?.name,
     });
   } else {
     res.status(401).send("You need to log in to access this route");
@@ -202,7 +229,7 @@ app.get("/api/loggedIn", async (req, res) => {
       email: req.user.email,
       isAdmin: req.user.isAdmin,
       chosenMosqueId: req.user.chosenMosqueId,
-      chosenMosqueName: chosenMosqueName.name,
+      chosenMosqueName: chosenMosqueName?.name,
     });
   } else {
     res.json({ success: false });
@@ -226,6 +253,21 @@ app.get("/api/logout", (req, res) => {
     }
   });
 });
+
+app.get(
+  "/api/google",
+  passport.authenticate("google", {
+    scope: ["email", "profile"],
+  })
+);
+
+app.get(
+  "/api/google/redirect",
+  passport.authenticate("google"),
+  async (req, res) => {
+    return res.redirect("/");
+  }
+);
 
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname + "/views/index.html"));

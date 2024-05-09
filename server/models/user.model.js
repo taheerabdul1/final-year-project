@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
       ref: 'Campaign',
     },
   ],
+  googleId: String,
 });
 
 //not sure what this does
