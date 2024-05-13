@@ -92,6 +92,7 @@ export default {
     }
     if (query.get("canceled")) {
       alert("Donation canceled.");
+      router.push("/makeDonation");
     }
   },
   methods: {

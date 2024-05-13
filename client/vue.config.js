@@ -5,6 +5,7 @@ module.exports = {
   transpileDependencies: true,
   configureWebpack: {
     devServer: {
+      port: 8080,
       proxy: {
         '/api': {
           target: 'http://localhost:3000',

@@ -1,6 +1,9 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import Donation from "../models/donation.model.js";
 import Campaign from "../models/campaign.model.js";
+import Mosque from "../models/mosque.model.js";
 import Stripe from "stripe";
 const stripe = new Stripe(
   "sk_test_51OmluHFSvP9ZwiqBIvzT4twxNnQplSoIZbzunRiOkhXBvUaw5iUMSVCw85mPz81Pdki6VELVavg6fYnM9MwRduks004EbUD8U4"
@@ -26,29 +29,34 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/pay/checkout", async (req, res) => {
-  const currentUrl = `${req.protocol}://${req.get("Host")}`;
+  const mosque = await Mosque.findOne({_id:req.user.chosenMosqueId});
+  const environment = process.env.NODE_ENV;
+  let currentUrl;
+  if (environment=="DEVELOPMENT"){
+    currentUrl = `http://localhost:8080`
+  } else {
+    currentUrl = `${req.protocol}://${req.get("Host")}`;
+  }
+  let successUrl = `${currentUrl}/makeDonation?success=true&amount=${req.body.amount}&campaign=${req.body.campaign}`;
+  let cancelUrl= `${currentUrl}/makeDonation?canceled=true`;
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
         quantity: 1,
-        adjustable_quantity: {
-          enabled: true,
-        },
         price_data: {
           unit_amount: req.body.amount * 100,
           currency: "gbp",
           product_data: {
-            name: `Donation`,
+            name: req.body.campaign? `${mosque.name} - ${req.body.campaign}` : mosque.name,
           },
         },
       },
     ],
     mode: "payment",
-    success_url: `${currentUrl}/makeDonation?success=true&amount=${req.body.amount}&campaign=${req.body.campaign}`,
-    cancel_url: `${currentUrl}/makeDonation?canceled=true`,
+    success_url: successUrl,
+    cancel_url: cancelUrl,
     automatic_tax: { enabled: true },
   });
-
   res.json({ url: session.url });
 });
 
