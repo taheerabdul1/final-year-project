@@ -232,7 +232,6 @@ export default {
     },
     // delete a specific campaign from the database
     deleteCampaign(campaign) {
-      console.log(JSON.stringify(campaign));
       fetch(`/api/campaigns/${campaign._id}`, {
         method: "DELETE",
         credentials: "include",

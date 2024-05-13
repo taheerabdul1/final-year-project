@@ -96,7 +96,6 @@ export default {
         adminPasscode: this.adminPasscode,
         chosenMosqueId: this.chosenMosqueId,
       };
-      console.log(newuser);
       try {
         const response = await fetch("/api/register", {
           method: "POST",

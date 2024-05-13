@@ -131,7 +131,6 @@ export default {
         }
       })
       .then((data) => {
-        console.log(data);
         this.donations = data;
       })
       .catch((error) => {

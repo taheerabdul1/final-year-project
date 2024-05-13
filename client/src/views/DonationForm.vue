@@ -6,13 +6,14 @@
       We thank you for your generosity! <br />To change the mosque you wish to
       donate to, edit your profle.
     </p>
-    <form @submit.prevent="submitDonation">
+    <form @submit.prevent="redirectToCheckout()" method="POST">
       <div class="mb-3">
         <label for="amount">Amount</label>
         <input
           type="number"
           class="form-control"
           id="amount"
+          name="amount"
           aria-describedby="amount"
           v-model="amount"
           placeholder="Enter Amount in £ here"
@@ -79,13 +80,41 @@ export default {
       })
       .then((data) => (this.campaigns = data))
       .catch(() => console.log("Error"));
+    const query = new URLSearchParams(window.location.search);
+    if (query.get("success")) {
+      this.amount = this.$route.query.amount;
+      this.selectedCampaign = this.$route.query.campaign;
+      this.submitDonation();
+    }
+    if (query.get("canceled")) {
+      alert("Donation canceled.");
+    }
   },
   methods: {
+    redirectToCheckout() {
+      fetch("/api/donations/pay/checkout", {
+        method: "POST",
+        body: JSON.stringify({
+          amount: this.amount,
+          campaign: this.selectedCampaign,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          window.location.href = data.url;
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    },
     // make a donation, submit different object depending on whether campaign is selected or not
     // redirect the user back to HomePage.vue after successful submission
     submitDonation() {
       let donation = [];
-      if (this.selectedCampaign === "") {
+      if (this.selectedCampaign === "" || null) {
         donation = {
           amount: this.amount,
           donor: this.user._id,
@@ -117,9 +146,11 @@ export default {
               throw new Error(response.status);
             }
           })
-          .then(() => {
-            alert("Donation successful");
-            router.push("/");
+          .then((data) => {
+            if(data.success){
+              alert("Donation successful");
+              router.push("/");
+            }
           })
           .catch((error) => {
             console.error(error);
