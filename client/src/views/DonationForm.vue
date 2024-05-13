@@ -83,7 +83,11 @@ export default {
     const query = new URLSearchParams(window.location.search);
     if (query.get("success")) {
       this.amount = this.$route.query.amount;
+      if (this.$route.query.campaign === "null") {
+      this.selectedCampaign = null;
+      } else {
       this.selectedCampaign = this.$route.query.campaign;
+      }
       this.submitDonation();
     }
     if (query.get("canceled")) {

@@ -55,16 +55,9 @@ router.post("/pay/checkout", async (req, res) => {
 router.post("/", async (req, res) => {
   if (req.user) {
     try {
-      let newDonation;
-      if (req.body.campaign) {
-        const { amount, donor, mosque, campaign } = req.body;
-        newDonation = new Donation({ amount, donor, mosque, campaign });
-      } else {
-        const { amount, donor, mosque } = req.body;
-        newDonation = new Donation({ amount, donor, mosque });
-      }
+      const { amount, donor, mosque, campaign } = req.body;
+      let newDonation = new Donation({ amount, donor, mosque, campaign });
       await newDonation.save();
-
       // If req.body.campaign exists, update the campaign's raisedAmount
       if (req.body.campaign) {
         await Campaign.findByIdAndUpdate(req.body.campaign, {
@@ -72,7 +65,6 @@ router.post("/", async (req, res) => {
           $addToSet: { donors: donor }, // Add donor to the donors array if not already present
         });
       }
-
       res.status(201).json({ success: true, newDonation });
     } catch (error) {
       console.error(error);
