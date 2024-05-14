@@ -1,12 +1,12 @@
 <template>
-  <div v-if="user.chosenMosqueName!= null">
+  <div v-if="user.chosenMosqueName != null">
     <h1>Donate to {{ user.chosenMosqueName }}</h1>
     <p>
       Fill in the form below to make a donation <br />
       We thank you for your generosity! <br />To change the mosque you wish to
       donate to, edit your profle.
     </p>
-    <form @submit.prevent="redirectToCheckout" method="POST">
+    <form @submit.prevent="redirectToCheckout()" method="POST">
       <div class="mb-3">
         <label for="amount">Amount</label>
         <input
@@ -55,59 +55,57 @@ export default {
   name: "DonationForm",
   setup() {
     const user = useUserStore();
-    const amount = "";
-    const donor = "";
-    const mosque = "";
-    const campaigns = [];
-    const selectedCampaign = null;
-
+    return {
+      user,
+    };
+  },
+  data() {
+    return {
+      amount: "",
+      donor: "",
+      mosque: "",
+      campaigns: [],
+      selectedCampaign: null,
+    };
+  },
+  created() {
     // retrieve the list of campaigns for the user's chosen mosque
-    fetch(`/api/campaigns/${user.chosenMosqueId}`)
-     .then((response) => {
+    fetch(`/api/campaigns/${this.user.chosenMosqueId}`)
+      .then((response) => {
         if (response.ok) {
           return response.json();
         } else {
           throw new Error(response.status);
         }
       })
-     .then((data) => (this.campaigns = data))
-     .catch(() => console.log("Error"));
-
+      .then((data) => (this.campaigns = data))
+      .catch(() => console.log("Error"));
     const query = new URLSearchParams(window.location.search);
     if (query.get("canceled")) {
       alert("Donation canceled.");
       router.push("/makeDonation");
     }
-
-    const redirectToCheckout = () => {
+  },
+  methods: {
+    redirectToCheckout() {
       fetch("/api/donations/pay/checkout", {
         method: "POST",
         body: JSON.stringify({
-          amount,
-          campaign: selectedCampaign,
+          amount: this.amount,
+          campaign: this.selectedCampaign,
         }),
         headers: {
           "Content-Type": "application/json",
         },
       })
-       .then((response) => response.json())
-       .then((data) => {
+        .then((response) => response.json())
+        .then((data) => {
           window.location.href = data.url;
         })
-       .catch((error) => {
+        .catch((error) => {
           console.error("Error:", error);
         });
-    };
-
-    return {
-      user,
-      amount,
-      donor,
-      mosque,
-      campaigns,
-      selectedCampaign,
-      redirectToCheckout,
-    };
+    },
   },
 };
 </script>
