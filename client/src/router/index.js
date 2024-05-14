@@ -14,6 +14,7 @@ import { useUserStore } from "../store/index";
 import AnnouncementsPage from "../views/AnnouncementsPage.vue";
 import AddAnnouncement from "../views/AddAnnouncement.vue";
 import LogOutPage from "../views/LogOutPage.vue";
+import DonationSuccess from "../views/DonationSuccess.vue";
 
 const routes = [
   {
@@ -135,6 +136,19 @@ const routes = [
         next();
       } else {
         next({ name: "home" });
+      }
+    },
+  },
+  {
+    path: "/donationSuccess",
+    name: "donationSuccess",
+    component: DonationSuccess,
+    beforeEnter: (to, from, next) => {
+      const user = useUserStore();
+      if (user.isLoggedIn) {
+        next();
+      } else {
+        next({ name: "denied" });
       }
     },
   },

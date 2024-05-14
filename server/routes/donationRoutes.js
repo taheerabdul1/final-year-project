@@ -37,7 +37,7 @@ router.post("/pay/checkout", async (req, res) => {
   } else {
     currentUrl = `${req.protocol}://${req.get("Host")}`;
   }
-  let successUrl = `${currentUrl}/makeDonation?success=true&amount=${req.body.amount}&campaign=${req.body.campaign}`;
+  let successUrl = `${currentUrl}/donationSuccess?session_id={CHECKOUT_SESSION_ID}&amount=${req.body.amount}&campaign=${req.body.campaign}`;
   let cancelUrl= `${currentUrl}/makeDonation?canceled=true`;
   const session = await stripe.checkout.sessions.create({
     line_items: [
@@ -59,6 +59,15 @@ router.post("/pay/checkout", async (req, res) => {
   });
   res.json({ url: session.url });
 });
+
+router.get("/pay/checkout", async (req, res) => {
+  try{
+    const session = await stripe.checkout.sessions.retrieve(req.query.session_id);
+    return res.json({session});
+  } catch (e) {
+    return res.status(400).json({success:false})
+  }
+})
 
 router.post("/", async (req, res) => {
   if (req.user) {

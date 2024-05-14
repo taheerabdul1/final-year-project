@@ -1,12 +1,12 @@
 <template>
-  <div v-if="user.chosenMosqueName != null">
+  <div v-if="user.chosenMosqueName!= null">
     <h1>Donate to {{ user.chosenMosqueName }}</h1>
     <p>
       Fill in the form below to make a donation <br />
       We thank you for your generosity! <br />To change the mosque you wish to
       donate to, edit your profle.
     </p>
-    <form @submit.prevent="redirectToCheckout()" method="POST">
+    <form @submit.prevent="redirectToCheckout" method="POST">
       <div class="mb-3">
         <label for="amount">Amount</label>
         <input
@@ -55,114 +55,59 @@ export default {
   name: "DonationForm",
   setup() {
     const user = useUserStore();
-    return {
-      user,
-    };
-  },
-  data() {
-    return {
-      amount: "",
-      donor: "",
-      mosque: "",
-      campaigns: [],
-      selectedCampaign: null,
-    };
-  },
-  created() {
+    const amount = "";
+    const donor = "";
+    const mosque = "";
+    const campaigns = [];
+    const selectedCampaign = null;
+
     // retrieve the list of campaigns for the user's chosen mosque
-    fetch(`/api/campaigns/${this.user.chosenMosqueId}`)
-      .then((response) => {
+    fetch(`/api/campaigns/${user.chosenMosqueId}`)
+     .then((response) => {
         if (response.ok) {
           return response.json();
         } else {
           throw new Error(response.status);
         }
       })
-      .then((data) => (this.campaigns = data))
-      .catch(() => console.log("Error"));
+     .then((data) => (this.campaigns = data))
+     .catch(() => console.log("Error"));
+
     const query = new URLSearchParams(window.location.search);
-    if (query.get("success")) {
-      this.amount = this.$route.query.amount;
-      if (this.$route.query.campaign === "null") {
-      this.selectedCampaign = null;
-      } else {
-      this.selectedCampaign = this.$route.query.campaign;
-      }
-      this.submitDonation();
-    }
     if (query.get("canceled")) {
       alert("Donation canceled.");
       router.push("/makeDonation");
     }
-  },
-  methods: {
-    redirectToCheckout() {
+
+    const redirectToCheckout = () => {
       fetch("/api/donations/pay/checkout", {
         method: "POST",
         body: JSON.stringify({
-          amount: this.amount,
-          campaign: this.selectedCampaign,
+          amount,
+          campaign: selectedCampaign,
         }),
         headers: {
           "Content-Type": "application/json",
         },
       })
-        .then((response) => response.json())
-        .then((data) => {
+       .then((response) => response.json())
+       .then((data) => {
           window.location.href = data.url;
         })
-        .catch((error) => {
+       .catch((error) => {
           console.error("Error:", error);
         });
-    },
-    // make a donation, submit different object depending on whether campaign is selected or not
-    // redirect the user back to HomePage.vue after successful submission
-    submitDonation() {
-      let donation = [];
-      if (this.selectedCampaign === "" || null) {
-        donation = {
-          amount: this.amount,
-          donor: this.user._id,
-          mosque: this.user.chosenMosqueId,
-        };
-      } else {
-        donation = {
-          amount: this.amount,
-          donor: this.user._id,
-          mosque: this.user.chosenMosqueId,
-          campaign: this.selectedCampaign,
-        };
-      }
-      if (this.amount == "") {
-        alert("Please enter an amount");
-      } else {
-        fetch("/api/donations", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json;charset=UTF-8",
-          },
-          body: JSON.stringify(donation),
-        })
-          .then((response) => {
-            if (response.ok) {
-              return response.json();
-            } else {
-              throw new Error(response.status);
-            }
-          })
-          .then((data) => {
-            if(data.success){
-              alert("Donation successful");
-              router.push("/");
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-            alert("Donation failed");
-          });
-      }
-    },
+    };
+
+    return {
+      user,
+      amount,
+      donor,
+      mosque,
+      campaigns,
+      selectedCampaign,
+      redirectToCheckout,
+    };
   },
 };
 </script>
